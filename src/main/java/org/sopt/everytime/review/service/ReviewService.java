@@ -42,21 +42,36 @@ public class ReviewService {
 	private final KeywordRepository keywordRepository;
 	private final ReviewKeywordRepository reviewKeywordRepository;
 
-	public ReviewListResponse getReviews(Long sectionId, Long keywordId, ReviewSort sort, int page, int size) {
-		LectureSection section = lectureSectionRepository.findWithCourseById(sectionId)
-			.orElseThrow(() -> new BusinessException(LectureErrorCode.LECTURE_SECTION_NOT_FOUND));
-		if (keywordId != null && !keywordRepository.existsById(keywordId)) {
+	public ReviewListResponse getReviews(Long sectionId, ReviewSort sort, int page, int size) {
+		LectureSection section = getSection(sectionId);
+		Page<ReviewResponse> reviews = reviewRepository.findBySectionId(sectionId, toPageable(sort, page, size))
+			.map(review -> ReviewResponse.of(review, null));
+		return toReviewListResponse(section, reviews);
+	}
+
+	public ReviewListResponse getReviewsByKeyword(Long sectionId, Long keywordId, ReviewSort sort, int page,
+		int size) {
+		LectureSection section = getSection(sectionId);
+		if (!keywordRepository.existsById(keywordId)) {
 			throw new BusinessException(ReviewErrorCode.KEYWORD_NOT_FOUND);
 		}
+		Page<ReviewResponse> reviews = findReviewsByKeyword(sectionId, keywordId, toPageable(sort, page, size));
+		return toReviewListResponse(section, reviews);
+	}
 
-		Pageable pageable = PageRequest.of(page - 1, size, sort.getSort());
-		Page<ReviewResponse> reviews = keywordId == null
-			? reviewRepository.findBySectionId(sectionId, pageable).map(review -> ReviewResponse.of(review, null))
-			: findReviewsByKeyword(sectionId, keywordId, pageable);
+	private LectureSection getSection(Long sectionId) {
+		return lectureSectionRepository.findWithCourseById(sectionId)
+			.orElseThrow(() -> new BusinessException(LectureErrorCode.LECTURE_SECTION_NOT_FOUND));
+	}
 
+	private Pageable toPageable(ReviewSort sort, int page, int size) {
+		return PageRequest.of(page - 1, size, sort.getSort());
+	}
+
+	private ReviewListResponse toReviewListResponse(LectureSection section, Page<ReviewResponse> reviews) {
 		return new ReviewListResponse(
-			LectureInfoResponse.of(section, reviewRepository.findAverageGradePointBySectionId(sectionId)),
-			getKeywordCounts(sectionId),
+			LectureInfoResponse.of(section, reviewRepository.findAverageGradePointBySectionId(section.getId())),
+			getKeywordCounts(section.getId()),
 			PageResponse.from(reviews)
 		);
 	}

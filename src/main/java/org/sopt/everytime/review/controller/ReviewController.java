@@ -17,9 +17,16 @@ public class ReviewController implements ReviewApi {
 	private final ReviewService reviewService;
 
 	@Override
-	public ResponseEntity<BaseResponse<ReviewListResponse>> getReviews(Long sectionId, Long keywordId,
+	public ResponseEntity<BaseResponse<ReviewListResponse>> getReviews(Long sectionId, ReviewSort sort, int page,
+		int size) {
+		return BaseResponse.success(ReviewSuccessCode.REVIEWS_FOUND,
+			reviewService.getReviews(sectionId, sort, page, size));
+	}
+
+	@Override
+	public ResponseEntity<BaseResponse<ReviewListResponse>> getReviewsByKeyword(Long sectionId, Long keywordId,
 		ReviewSort sort, int page, int size) {
 		return BaseResponse.success(ReviewSuccessCode.REVIEWS_FOUND,
-			reviewService.getReviews(sectionId, keywordId, sort, page, size));
+			reviewService.getReviewsByKeyword(sectionId, keywordId, sort, page, size));
 	}
 }
