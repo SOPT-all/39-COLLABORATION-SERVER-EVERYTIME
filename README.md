@@ -37,6 +37,7 @@
 | 언어·빌드 | <img src="https://skillicons.dev/icons?i=java" width="18" height="18" alt="" /> **Java 21**<br>Gradle Wrapper |
 | 웹 API | <img src="https://skillicons.dev/icons?i=spring" width="18" height="18" alt="" /> **Spring Boot 4.1.2**<br>Spring MVC와 Bean Validation |
 | 데이터 접근 | <img src="https://skillicons.dev/icons?i=mysql" width="18" height="18" alt="" /> **MySQL 8.4**<br>Spring Data JPA |
+| API 문서 | <img src="https://skillicons.dev/icons?i=spring" width="18" height="18" alt="" /> **springdoc-openapi**<br>Swagger UI |
 | 로컬 DB 실행 | <img src="https://skillicons.dev/icons?i=docker" width="18" height="18" alt="" /> **Docker Compose** |
 
 ---
@@ -100,6 +101,12 @@ JDK 21과 Docker를 준비하고 프로젝트 루트에서 실행합니다.
    ```
 
    로그에 `Started EverytimeApplication`이 표시되면 서버가 시작된 상태입니다.
+
+5. API 문서는 Swagger UI에서 확인합니다.
+
+   ```text
+   http://localhost:8080/swagger-ui/index.html
+   ```
 
 ---
 
