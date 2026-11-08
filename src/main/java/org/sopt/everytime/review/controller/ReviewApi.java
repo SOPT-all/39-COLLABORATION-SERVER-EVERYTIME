@@ -6,6 +6,7 @@ import org.sopt.everytime.review.dto.response.ReviewListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 @Tag(name = "Review", description = "강의평 API")
+@RequestMapping("/api/v1")
 public interface ReviewApi {
 
 	@Operation(

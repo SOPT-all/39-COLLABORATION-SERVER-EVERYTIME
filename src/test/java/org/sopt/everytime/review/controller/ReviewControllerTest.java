@@ -28,7 +28,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("전체 조회는 강의 정보, 칩별 개수, 등록순 강의평을 응답한다")
 	void getReviews_all() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews"))
+		mockMvc.perform(get("/api/v1/sections/1/reviews"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.message").value("강의평 목록 조회 성공"))
 			.andExpect(jsonPath("$.data.lecture.sectionId").value(1))
@@ -56,7 +56,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("page와 size로 1부터 시작하는 페이지를 조회한다")
 	void getReviews_paging() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews").param("page", "2").param("size", "2"))
+		mockMvc.perform(get("/api/v1/sections/1/reviews").param("page", "2").param("size", "2"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.reviews.content", hasSize(1)))
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(101))
@@ -68,7 +68,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("칩별 조회는 키워드가 달린 강의평만 강조 구간과 함께 응답한다")
 	void getReviews_byKeyword() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews/keywords/2"))
+		mockMvc.perform(get("/api/v1/sections/1/reviews/keywords/2"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.keywords[1].count").value(2))
 			.andExpect(jsonPath("$.data.reviews.totalElements").value(2))
@@ -81,7 +81,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("강조 구간이 없는 매핑은 highlight가 null이다")
 	void getReviews_byKeyword_withoutHighlight() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews/keywords/3"))
+		mockMvc.perform(get("/api/v1/sections/1/reviews/keywords/3"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(101))
 			.andExpect(jsonPath("$.data.reviews.content[0].highlight").isEmpty());
@@ -90,7 +90,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("강의평이 없는 분반은 평균 0과 빈 목록으로 응답한다")
 	void getReviews_empty() throws Exception {
-		mockMvc.perform(get("/sections/2/reviews"))
+		mockMvc.perform(get("/api/v1/sections/2/reviews"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(0.0))
 			.andExpect(jsonPath("$.data.keywords[0].count").value(0))
@@ -101,7 +101,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 분반은 404로 응답한다")
 	void getReviews_sectionNotFound() throws Exception {
-		mockMvc.perform(get("/sections/999/reviews"))
+		mockMvc.perform(get("/api/v1/sections/999/reviews"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 강의입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
@@ -110,19 +110,19 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 키워드는 404로 응답한다")
 	void getReviews_keywordNotFound() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews/keywords/5"))
+		mockMvc.perform(get("/api/v1/sections/1/reviews/keywords/5"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 키워드입니다."));
 	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {
-		"/sections/abc/reviews",
-		"/sections/1/reviews?sort=POPULAR",
-		"/sections/1/reviews?page=0",
-		"/sections/1/reviews?size=51",
-		"/sections/1/reviews/keywords/abc",
-		"/sections/1/reviews/keywords/2?size=51"
+		"/api/v1/sections/abc/reviews",
+		"/api/v1/sections/1/reviews?sort=POPULAR",
+		"/api/v1/sections/1/reviews?page=0",
+		"/api/v1/sections/1/reviews?size=51",
+		"/api/v1/sections/1/reviews/keywords/abc",
+		"/api/v1/sections/1/reviews/keywords/2?size=51"
 	})
 	@DisplayName("잘못된 파라미터는 400으로 응답한다")
 	void getReviews_invalidParameter(String url) throws Exception {
