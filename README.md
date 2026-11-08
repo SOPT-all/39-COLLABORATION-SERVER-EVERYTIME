@@ -165,7 +165,7 @@ feat/#12-lecture-list
 | 구간                 | 머지 방식                |
 |--------------------|----------------------|
 | 작업 브랜치 → `develop` | **Squash and merge** |
-| `develop` → `main` | **Rebase and merge** |
+| `develop` → `main` | **Create a merge commit** |
 
 일반 작업은 `develop`에서 분기합니다. 긴급 수정은 `main`에서 분기하고 `main`과 `develop`에 반영합니다. 두 통합 브랜치의 변경은 PR을 통해 반영합니다.
 
