@@ -68,7 +68,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("칩별 조회는 키워드가 달린 강의평만 강조 구간과 함께 응답한다")
 	void getReviews_byKeyword() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews").param("keywordId", "2"))
+		mockMvc.perform(get("/sections/1/reviews/keywords/2"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.keywords[1].count").value(2))
 			.andExpect(jsonPath("$.data.reviews.totalElements").value(2))
@@ -81,7 +81,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("강조 구간이 없는 매핑은 highlight가 null이다")
 	void getReviews_byKeyword_withoutHighlight() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews").param("keywordId", "3"))
+		mockMvc.perform(get("/sections/1/reviews/keywords/3"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(101))
 			.andExpect(jsonPath("$.data.reviews.content[0].highlight").isEmpty());
@@ -110,7 +110,7 @@ class ReviewControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 키워드는 404로 응답한다")
 	void getReviews_keywordNotFound() throws Exception {
-		mockMvc.perform(get("/sections/1/reviews").param("keywordId", "5"))
+		mockMvc.perform(get("/sections/1/reviews/keywords/5"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 키워드입니다."));
 	}
@@ -121,7 +121,8 @@ class ReviewControllerTest {
 		"/sections/1/reviews?sort=POPULAR",
 		"/sections/1/reviews?page=0",
 		"/sections/1/reviews?size=51",
-		"/sections/1/reviews?keywordId=abc"
+		"/sections/1/reviews/keywords/abc",
+		"/sections/1/reviews/keywords/2?size=51"
 	})
 	@DisplayName("잘못된 파라미터는 400으로 응답한다")
 	void getReviews_invalidParameter(String url) throws Exception {
