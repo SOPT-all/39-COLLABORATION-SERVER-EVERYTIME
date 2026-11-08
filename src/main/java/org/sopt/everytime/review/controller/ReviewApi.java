@@ -20,7 +20,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 @Tag(name = "Review", description = "강의평 API")
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/sections")
 public interface ReviewApi {
 
 	@Operation(
@@ -36,7 +36,7 @@ public interface ReviewApi {
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class)))
 	})
-	@GetMapping("/sections/{sectionId}/reviews")
+	@GetMapping("/{sectionId}/reviews")
 	ResponseEntity<BaseResponse<ReviewListResponse>> getReviews(
 		@Parameter(description = "분반 ID", example = "1")
 		@PathVariable Long sectionId,
@@ -67,7 +67,7 @@ public interface ReviewApi {
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class)))
 	})
-	@GetMapping("/sections/{sectionId}/reviews/keywords/{keywordId}")
+	@GetMapping("/{sectionId}/reviews/keywords/{keywordId}")
 	ResponseEntity<BaseResponse<ReviewListResponse>> getReviewsByKeyword(
 		@Parameter(description = "분반 ID", example = "1")
 		@PathVariable Long sectionId,
