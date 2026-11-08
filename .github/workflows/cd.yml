@@ -47,13 +47,21 @@ jobs:
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}
 
+      - name: Create .env
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          printf '%s\n' "$ENV_PROD" > .env
+          printf 'DOCKERHUB_USERNAME=%s\n' "$DOCKERHUB_USERNAME" >> .env
+
       - name: Copy deploy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.prod.yml,nginx/default.conf"
+          source: "docker-compose.prod.yml,nginx/default.conf,.env"
           target: ~/everytime
 
       - name: Deploy on EC2
@@ -69,6 +77,7 @@ jobs:
           script: |
             set -e
             cd ~/everytime
+            chmod 600 .env
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker compose -f docker-compose.prod.yml pull app
             docker compose -f docker-compose.prod.yml up -d
