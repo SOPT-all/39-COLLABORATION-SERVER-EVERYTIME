@@ -12,3 +12,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  override-with-generic-response: false
+  swagger-ui:
+    tags-sorter: alpha
