@@ -3,3 +3,6 @@ spring:
     hibernate:
       ddl-auto: ${DDL_AUTO:validate}
     show-sql: false
+
+server:
+  forward-headers-strategy: framework
