@@ -30,7 +30,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("담긴 강의 전체를 담기 ID 순으로 조회하고 필요한 정보만 반환한다")
 	void getTimetable_all() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "1001"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "1001"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.code").value("200"))
@@ -50,7 +50,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("한 강의의 모든 수업 시간을 요일순과 같은 요일의 시작 시각순으로 반환한다")
 	void getTimetable_sortedTimes() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "1001"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "1001"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.entries[0].times", hasSize(3)))
 			.andExpect(jsonPath("$.data.entries[0].times[0].dayOfWeek").value("MON"))
@@ -64,7 +64,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("요청한 사용자에게 담긴 강의만 반환한다")
 	void getTimetable_onlyRequestedUser() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "1002"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "1002"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.entries", hasSize(1)))
 			.andExpect(jsonPath("$.data.entries[0].entryId").value(1003))
@@ -75,7 +75,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("존재하는 사용자에게 담긴 강의가 없으면 빈 배열로 응답한다")
 	void getTimetable_empty() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "1003"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "1003"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.data.entries", hasSize(0)));
@@ -84,7 +84,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("담긴 강의에 수업 시간이 없으면 강의는 유지하고 times를 빈 배열로 응답한다")
 	void getTimetable_withoutTimes() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "1001"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "1001"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.entries[1].courseName").value("데이터베이스"))
 			.andExpect(jsonPath("$.data.entries[1].times", hasSize(0)));
@@ -93,7 +93,7 @@ class TimetableControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 사용자는 404로 응답한다")
 	void getTimetable_userNotFound() throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", "999999"))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", "999999"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("404"))
@@ -109,7 +109,7 @@ class TimetableControllerTest {
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
 			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data.userId").value("사용자 ID는 필수입니다."));
+			.andExpect(jsonPath("$.data['X-Member-Id']").value("사용자 ID는 필수입니다."));
 	}
 
 	@ParameterizedTest
@@ -122,11 +122,11 @@ class TimetableControllerTest {
 	})
 	@DisplayName("잘못된 사용자 ID는 내부 정보 없는 필드별 안내와 함께 400으로 응답한다")
 	void getTimetable_invalidUserId(String userId, String message) throws Exception {
-		mockMvc.perform(get("/timetable").param("userId", userId))
+		mockMvc.perform(get("/timetable").header("X-Member-Id", userId))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
 			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data.userId").value(message));
+			.andExpect(jsonPath("$.data['X-Member-Id']").value(message));
 	}
 }

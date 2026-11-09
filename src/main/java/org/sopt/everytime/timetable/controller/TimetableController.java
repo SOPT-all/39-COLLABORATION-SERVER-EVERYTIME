@@ -2,7 +2,6 @@ package org.sopt.everytime.timetable.controller;
 
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.timetable.code.TimetableSuccessCode;
-import org.sopt.everytime.timetable.dto.request.TimetableRequest;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.service.TimetableService;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,8 @@ public class TimetableController implements TimetableApi {
 	private final TimetableService timetableService;
 
 	@Override
-	public ResponseEntity<BaseResponse<TimetableResponse>> getTimetable(TimetableRequest request) {
+	public ResponseEntity<BaseResponse<TimetableResponse>> getTimetable(Long userId) {
 		return BaseResponse.success(TimetableSuccessCode.TIMETABLE_FETCHED,
-			timetableService.getTimetable(request.userId()));
+			timetableService.getTimetable(userId));
 	}
 }
