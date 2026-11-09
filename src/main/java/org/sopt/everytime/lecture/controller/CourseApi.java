@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 @Tag(name = "Course", description = "강의 API")
@@ -45,5 +46,6 @@ public interface CourseApi {
 		@RequestParam(value = "sort", defaultValue = "NAME_ASC") CourseSort sort,
 		@RequestParam(value = "page", defaultValue = "1") @Min(value = 1, message = "페이지는 1 이상이어야 합니다.") int page,
 		@RequestParam(value = "size", defaultValue = "10")
-		@Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.") int size);
+		@Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
+		@Max(value = 50, message = "페이지 크기는 50 이하이어야 합니다.") int size);
 }
