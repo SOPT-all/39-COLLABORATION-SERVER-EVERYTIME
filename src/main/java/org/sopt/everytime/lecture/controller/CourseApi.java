@@ -30,7 +30,7 @@ public interface CourseApi {
 	})
 	@GetMapping
 	ResponseEntity<BaseResponse<PageResponse<CourseResponse>>> getCourses(
-		@Parameter(description = "사용자 ID", example = "1", required = true) @RequestHeader("userId") Long userId,
+		@Parameter(description = "사용자 ID", example = "1", required = true) @RequestHeader("X-Member-Id") Long userId,
 		@Parameter(description = "카테고리명", example = "전공필수") @RequestParam(value = "category", required = false) String category,
 		@Parameter(description = "학과 ID", example = "1") @RequestParam(value = "departmentId", required = false) Long departmentId,
 		@Parameter(description = "개설 학기", example = "2학기") @RequestParam(value = "semester", required = false) String semester,

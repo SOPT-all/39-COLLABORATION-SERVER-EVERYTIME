@@ -25,7 +25,7 @@ class CourseControllerTest {
 	@Test
 	void getCourses_filtersTakenAndRestrictedCourses() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
-				.header("userId", 1)
+				.header("X-Member-Id", 1)
 				.param("hideTaken", "true")
 				.param("hideRestricted", "true"))
 			.andExpect(status().isOk())
@@ -38,7 +38,7 @@ class CourseControllerTest {
 	@Test
 	void getCourses_appliesFiltersAndPagination() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
-				.header("userId", 1)
+				.header("X-Member-Id", 1)
 				.param("category", "전공필수")
 				.param("page", "1")
 				.param("size", "1"))
@@ -52,7 +52,7 @@ class CourseControllerTest {
 
 	@Test
 	void getCourses_returnsNotFoundForUnknownUser() throws Exception {
-		mockMvc.perform(get("/api/v1/courses").header("userId", 999))
+		mockMvc.perform(get("/api/v1/courses").header("X-Member-Id", 999))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 사용자입니다."));
 	}
