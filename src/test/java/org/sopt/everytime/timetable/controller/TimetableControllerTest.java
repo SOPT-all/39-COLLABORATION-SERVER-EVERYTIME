@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -102,31 +102,34 @@ class TimetableControllerTest {
 	}
 
 	@Test
-	@DisplayName("사용자 ID를 생략하면 필드별 안내와 함께 400으로 응답한다")
+	@DisplayName("사용자 ID 헤더를 생략하면 기존 공통 400 응답을 반환한다")
 	void getTimetable_missingUserId() throws Exception {
 		mockMvc.perform(get("/timetable"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data['X-Member-Id']").value("사용자 ID는 필수입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName("쿼리 파라미터만으로는 사용자 ID 헤더를 대신할 수 없다")
+	void getTimetable_queryParameterWithoutHeader() throws Exception {
+		mockMvc.perform(get("/timetable").param("userId", "1001"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
 	@ParameterizedTest
-	@CsvSource({
-		"0, 사용자 ID는 1 이상이어야 합니다.",
-		"-1, 사용자 ID는 1 이상이어야 합니다.",
-		"abc, 사용자 ID는 숫자여야 합니다.",
-		"1.5, 사용자 ID는 숫자여야 합니다.",
-		"9223372036854775808, 사용자 ID는 숫자여야 합니다."
-	})
-	@DisplayName("잘못된 사용자 ID는 내부 정보 없는 필드별 안내와 함께 400으로 응답한다")
-	void getTimetable_invalidUserId(String userId, String message) throws Exception {
+	@ValueSource(strings = {"0", "-1", "abc", "1.5", "9223372036854775808"})
+	@DisplayName("잘못된 사용자 ID는 내부 정보 없이 기존 공통 400 응답을 반환한다")
+	void getTimetable_invalidUserId(String userId) throws Exception {
 		mockMvc.perform(get("/timetable").header("X-Member-Id", userId))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data['X-Member-Id']").value(message));
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 }
