@@ -4,8 +4,8 @@ import org.sopt.everytime.global.response.BaseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,7 +18,7 @@ import jakarta.validation.constraints.Min;
 @RequestMapping("/timetable")
 public interface TimetableApi {
 
-	@Operation(summary = "시간표 항목 삭제", description = "사용자가 담은 항목만 삭제하며 강의와 수업 시간 원본은 유지합니다.")
+	@Operation(summary = "시간표 항목 삭제", description = "담기 항목만 삭제하며 강의 원본은 유지합니다.")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "시간표 항목 삭제 성공. data는 null입니다."),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. data는 null입니다."),
@@ -30,6 +30,6 @@ public interface TimetableApi {
 	ResponseEntity<BaseResponse<Void>> deleteTimetableEntry(
 		@Parameter(description = "삭제할 시간표 담기 항목 ID", example = "1")
 		@PathVariable("entryId") @Min(value = 1, message = "시간표 항목 ID는 1 이상이어야 합니다.") Long entryId,
-		@Parameter(description = "삭제를 요청하는 사용자 ID", example = "1")
-		@RequestParam("userId") @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다.") Long userId);
+		@Parameter(description = "삭제를 요청하는 사용자 ID", example = "1", required = true)
+		@RequestHeader("X-Member-Id") @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다.") Long userId);
 }
