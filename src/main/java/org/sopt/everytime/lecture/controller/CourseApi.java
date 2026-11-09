@@ -1,8 +1,8 @@
 package org.sopt.everytime.lecture.controller;
 
 import org.sopt.everytime.global.response.BaseResponse;
-import org.sopt.everytime.global.response.PageResponse;
 import org.sopt.everytime.lecture.dto.request.CourseSort;
+import org.sopt.everytime.lecture.dto.response.CoursePageResponse;
 import org.sopt.everytime.lecture.dto.response.CourseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +32,10 @@ public interface CourseApi {
 			content = @Content(schema = @Schema(implementation = BaseResponse.class)))
 	})
 	@GetMapping
-	ResponseEntity<BaseResponse<PageResponse<CourseResponse>>> getCourses(
+	ResponseEntity<BaseResponse<CoursePageResponse>> getCourses(
 		@Parameter(description = "사용자 ID", example = "1", required = true) @RequestHeader("X-Member-Id") Long userId,
-		@Parameter(description = "카테고리명", example = "전공필수")
-		@RequestParam(value = "category", required = false) String category,
+		@Parameter(description = "카테고리 ID", example = "1")
+		@RequestParam(value = "categoryId", required = false) Long categoryId,
 		@Parameter(description = "학과 ID", example = "1")
 		@RequestParam(value = "departmentId", required = false) Long departmentId,
 		@Parameter(description = "개설 학기", example = "2학기")

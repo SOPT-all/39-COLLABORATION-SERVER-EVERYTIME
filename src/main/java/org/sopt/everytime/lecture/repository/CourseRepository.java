@@ -14,7 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 		from Course c
 		join c.department d
 		join c.category category
-		where (:category is null or category.name = :category)
+		where (:categoryId is null or category.id = :categoryId)
 		and (:departmentId is null or d.id = :departmentId)
 		and (:semester is null or c.semester = :semester)
 		and (:hideTaken = false or not exists (
@@ -25,7 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			select u.grade from User u where u.id = :userId
 		))
 		""")
-	Page<Course> findCourses(@Param("userId") Long userId, @Param("category") String category,
+	Page<Course> findCourses(@Param("userId") Long userId, @Param("categoryId") Long categoryId,
 		@Param("departmentId") Long departmentId, @Param("semester") String semester,
 		@Param("hideTaken") boolean hideTaken, @Param("hideRestricted") boolean hideRestricted, Pageable pageable);
 }
