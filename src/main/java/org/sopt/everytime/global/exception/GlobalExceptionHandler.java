@@ -6,7 +6,6 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
-import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -59,10 +58,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private String resolveValidationMessage(FieldError fieldError) {
 		if (fieldError.isBindingFailure()) {
-			if ("typeMismatch".equals(fieldError.getCode())
-				&& "timetableRequest".equals(fieldError.getObjectName()) && "userId".equals(fieldError.getField())) {
-				return TimetableErrorCode.INVALID_USER_ID.getMessage();
-			}
 			return GlobalErrorCode.INVALID_INPUT_VALUE.getMessage();
 		}
 		return fieldError.getDefaultMessage();
@@ -88,11 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatusCode statusCode, WebRequest request) {
 		if (exception instanceof MethodArgumentTypeMismatchException argumentException) {
 			String name = argumentException.getName();
-			String message = switch (name) {
-				case "entryId" -> TimetableErrorCode.INVALID_ENTRY_ID.getMessage();
-				case "userId" -> TimetableErrorCode.INVALID_USER_ID.getMessage();
-				default -> GlobalErrorCode.INVALID_INPUT_VALUE.getMessage();
-			};
+			String message = "%s의 형식이 올바르지 않습니다.".formatted(name);
 			return invalidRequest(exception, headers, Map.of(name, message));
 		}
 		return handleExceptionInternal(exception, null, headers, statusCode, request);
@@ -103,7 +94,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		MissingServletRequestParameterException exception, HttpHeaders headers, HttpStatusCode statusCode,
 		WebRequest request) {
 		String name = exception.getParameterName();
-		String message = "userId".equals(name) ? "사용자 ID는 필수입니다." : "필수 요청 값이 누락되었습니다.";
+		String message = "%s는 필수 요청 값입니다.".formatted(name);
 		return invalidRequest(exception, headers, Map.of(name, message));
 	}
 

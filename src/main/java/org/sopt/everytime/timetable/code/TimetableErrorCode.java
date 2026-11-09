@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TimetableErrorCode implements ErrorCode {
 
-	INVALID_USER_ID(HttpStatus.BAD_REQUEST, "사용자 ID는 숫자여야 합니다."),
-	INVALID_ENTRY_ID(HttpStatus.BAD_REQUEST, "시간표 항목 ID는 숫자여야 합니다."),
-
 	TIMETABLE_ENTRY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시간표 항목입니다."),
 	TIMETABLE_ENTRY_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 시간표 항목을 삭제할 권한이 없습니다.");
 

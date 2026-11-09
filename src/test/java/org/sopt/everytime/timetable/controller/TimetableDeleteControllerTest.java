@@ -95,21 +95,21 @@ class TimetableDeleteControllerTest {
 	void deleteTimetableEntry_missingUserId() throws Exception {
 		mockMvc.perform(delete("/timetable/entries/1001"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.data.userId").value("사용자 ID는 필수입니다."));
+			.andExpect(jsonPath("$.data.userId").value("userId는 필수 요청 값입니다."));
 	}
 
 	@ParameterizedTest
 	@CsvSource({
 		"0, 1001, entryId, 시간표 항목 ID는 1 이상이어야 합니다.",
 		"-1, 1001, entryId, 시간표 항목 ID는 1 이상이어야 합니다.",
-		"abc, 1001, entryId, 시간표 항목 ID는 숫자여야 합니다.",
-		"1.5, 1001, entryId, 시간표 항목 ID는 숫자여야 합니다.",
-		"9223372036854775808, 1001, entryId, 시간표 항목 ID는 숫자여야 합니다.",
+		"abc, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
+		"1.5, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
+		"9223372036854775808, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
 		"1001, 0, userId, 사용자 ID는 1 이상이어야 합니다.",
 		"1001, -1, userId, 사용자 ID는 1 이상이어야 합니다.",
-		"1001, abc, userId, 사용자 ID는 숫자여야 합니다.",
-		"1001, 1.5, userId, 사용자 ID는 숫자여야 합니다.",
-		"1001, 9223372036854775808, userId, 사용자 ID는 숫자여야 합니다."
+		"1001, abc, userId, userId의 형식이 올바르지 않습니다.",
+		"1001, 1.5, userId, userId의 형식이 올바르지 않습니다.",
+		"1001, 9223372036854775808, userId, userId의 형식이 올바르지 않습니다."
 	})
 	@DisplayName("잘못된 ID는 내부 정보 없이 400과 필드별 메시지를 반환한다")
 	void deleteTimetableEntry_invalidId(String entryId, String userId, String field, String message) throws Exception {
