@@ -8,12 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "review_keywords")
+@Table(
+	name = "review_keywords",
+	uniqueConstraints = @UniqueConstraint(name = "uk_review_keywords_review_keyword", columnNames = {"review_id",
+		"keyword_id"})
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewKeyword {
