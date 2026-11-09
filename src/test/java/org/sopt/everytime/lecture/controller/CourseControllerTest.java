@@ -51,6 +51,54 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_appliesDepartmentAndSemesterFilters() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("departmentId", "2")
+				.param("semester", "2학기"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.content", hasSize(1)))
+			.andExpect(jsonPath("$.data.content[0].name").value("글쓰기와 소통"));
+	}
+
+	@Test
+	void getCourses_appliesDescendingNameSort() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("sort", "NAME_DESC"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.content[0].name").value("자료구조"));
+	}
+
+	@Test
+	void getCourses_returnsBadRequestForInvalidPagination() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("page", "0"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("size", "0"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("size", "51"))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void getCourses_returnsBadRequestForInvalidMemberHeader() throws Exception {
+		mockMvc.perform(get("/api/v1/courses"))
+			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", "invalid"))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void getCourses_returnsNotFoundForUnknownUser() throws Exception {
 		mockMvc.perform(get("/api/v1/courses").header("X-Member-Id", 999))
 			.andExpect(status().isNotFound())
