@@ -108,7 +108,7 @@ class TimetableControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("요청 값이 올바르지 않습니다."))
+			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
 			.andExpect(jsonPath("$.data.userId").value("사용자 ID는 필수입니다."));
 	}
 
@@ -126,7 +126,7 @@ class TimetableControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("요청 값이 올바르지 않습니다."))
+			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
 			.andExpect(jsonPath("$.data.userId").value(message));
 	}
 }

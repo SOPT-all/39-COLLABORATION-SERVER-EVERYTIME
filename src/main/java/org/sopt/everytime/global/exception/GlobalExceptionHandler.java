@@ -6,26 +6,22 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-	private final MessageSource messageSource;
 
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<BaseResponse<Void>> handleBusinessException(BusinessException exception) {
@@ -48,13 +44,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		exception.getBindingResult()
 			.getFieldErrors()
 			.forEach(fieldError -> fieldErrors.putIfAbsent(fieldError.getField(),
-				messageSource.getMessage(fieldError, LocaleContextHolder.getLocale())));
+				resolveValidationMessage(fieldError)));
 
 		logException(statusCode, exception);
 		ErrorCode errorCode = GlobalErrorCode.INVALID_INPUT_VALUE;
 		return ResponseEntity.status(errorCode.getHttpStatus())
 			.headers(headers)
 			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), fieldErrors));
+	}
+
+	private String resolveValidationMessage(FieldError fieldError) {
+		if (fieldError.isBindingFailure()) {
+			if ("typeMismatch".equals(fieldError.getCode())
+				&& "timetableRequest".equals(fieldError.getObjectName()) && "userId".equals(fieldError.getField())) {
+				return TimetableErrorCode.INVALID_USER_ID.getMessage();
+			}
+			return GlobalErrorCode.INVALID_INPUT_VALUE.getMessage();
+		}
+		return fieldError.getDefaultMessage();
 	}
 
 	@Override

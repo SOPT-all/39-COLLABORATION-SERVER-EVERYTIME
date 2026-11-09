@@ -24,7 +24,7 @@ public interface TimetableApi {
 	@Operation(summary = "시간표 조회", description = "단일 연도·학기 데모의 담긴 강의 전체를 페이징 없이 조회합니다.")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "시간표 조회 성공. 담긴 강의가 없으면 entries는 빈 배열입니다."),
-		@ApiResponse(responseCode = "400", description = "요청 값이 올바르지 않습니다. data에 필드별 오류를 반환합니다.",
+		@ApiResponse(responseCode = "400", description = "입력값이 올바르지 않습니다. data에 필드별 오류를 반환합니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class))),
 		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class))),
