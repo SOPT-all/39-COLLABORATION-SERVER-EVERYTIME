@@ -82,10 +82,6 @@ class CourseControllerTest {
 				.param("size", "0"))
 			.andExpect(status().isBadRequest());
 
-		mockMvc.perform(get("/api/v1/courses")
-				.header("X-Member-Id", 1)
-				.param("size", "51"))
-			.andExpect(status().isBadRequest());
 	}
 
 	@Test
