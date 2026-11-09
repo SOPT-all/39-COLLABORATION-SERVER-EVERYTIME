@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.lecture.dto.response.CoursePageResponse;
 import org.sopt.everytime.lecture.dto.request.CourseSort;
@@ -34,6 +35,9 @@ public class CourseService {
 
 	public CoursePageResponse getCourses(Long userId, Long categoryId, Long departmentId, String semester,
 		boolean hideTaken, boolean hideRestricted, CourseSort sort, int page, int size) {
+		if (userId == null || userId <= 0) {
+			throw new BusinessException(GlobalErrorCode.INVALID_REQUEST);
+		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
 		}

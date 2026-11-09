@@ -1,6 +1,7 @@
 package org.sopt.everytime.lecture.controller;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -97,6 +98,17 @@ class CourseControllerTest {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", "invalid"))
 			.andExpect(status().isBadRequest());
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 0))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").value(nullValue()));
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", -1))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
 	}
 
 	@Test
