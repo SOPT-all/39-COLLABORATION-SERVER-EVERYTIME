@@ -6,7 +6,6 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
-import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -69,9 +68,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-		if (exception instanceof MissingRequestHeaderException headerException
-			&& "X-Member-Id".equalsIgnoreCase(headerException.getHeaderName())) {
-			return invalidMemberHeader(exception, headers, "사용자 ID는 필수입니다.");
+		if (exception instanceof MissingRequestHeaderException headerException) {
+			String headerName = headerException.getHeaderName();
+			return invalidHeaders(exception, headers, Map.of(headerName, headerLabel(headerName) + "는 필수입니다."));
 		}
 		return super.handleServletRequestBindingException(exception, headers, statusCode, request);
 	}
@@ -79,11 +78,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException exception, HttpHeaders headers,
 		HttpStatusCode statusCode, WebRequest request) {
-		if (exception instanceof MethodArgumentTypeMismatchException argumentException) {
-			RequestHeader header = argumentException.getParameter().getParameterAnnotation(RequestHeader.class);
-			if (header != null && "X-Member-Id".equalsIgnoreCase(header.value())) {
-				return invalidMemberHeader(exception, headers, TimetableErrorCode.INVALID_USER_ID.getMessage());
-			}
+		if (exception instanceof MethodArgumentTypeMismatchException argumentException
+			&& argumentException.getParameter().hasParameterAnnotation(RequestHeader.class)) {
+			String headerName = argumentException.getName();
+			Class<?> requiredType = argumentException.getRequiredType();
+			String message = requiredType != null && Number.class.isAssignableFrom(requiredType)
+				? headerLabel(headerName) + "는 숫자여야 합니다."
+				: "요청 헤더 값의 형식이 올바르지 않습니다.";
+			return invalidHeaders(exception, headers, Map.of(headerName, message));
 		}
 		return super.handleTypeMismatch(exception, headers, statusCode, request);
 	}
@@ -92,21 +94,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 		if (!exception.isForReturnValue()) {
+			Map<String, String> fieldErrors = new LinkedHashMap<>();
 			for (var result : exception.getParameterValidationResults()) {
 				RequestHeader header = result.getMethodParameter().getParameterAnnotation(RequestHeader.class);
-				if (header != null && "X-Member-Id".equalsIgnoreCase(header.value())) {
-					return invalidMemberHeader(exception, headers, result.getResolvableErrors().getFirst().getDefaultMessage());
+				if (header != null) {
+					String headerName = header.name().isBlank() ? header.value() : header.name();
+					if (headerName.isBlank()) {
+						headerName = result.getMethodParameter().getParameterName();
+					}
+					for (var error : result.getResolvableErrors()) {
+						fieldErrors.putIfAbsent(headerName, error.getDefaultMessage() == null
+							? GlobalErrorCode.INVALID_INPUT_VALUE.getMessage() : error.getDefaultMessage());
+					}
 				}
+			}
+			if (!fieldErrors.isEmpty()) {
+				return invalidHeaders(exception, headers, fieldErrors);
 			}
 		}
 		return super.handleHandlerMethodValidationException(exception, headers, statusCode, request);
 	}
 
-	private ResponseEntity<Object> invalidMemberHeader(Exception exception, HttpHeaders headers, String message) {
+	private String headerLabel(String headerName) {
+		return "X-Member-Id".equalsIgnoreCase(headerName) ? "사용자 ID" : headerName + " 헤더";
+	}
+
+	private ResponseEntity<Object> invalidHeaders(Exception exception, HttpHeaders headers,
+		Map<String, String> fieldErrors) {
 		ErrorCode errorCode = GlobalErrorCode.INVALID_INPUT_VALUE;
 		logException(errorCode.getHttpStatus(), exception);
 		return ResponseEntity.status(errorCode.getHttpStatus()).headers(headers)
-			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), Map.of("X-Member-Id", message)));
+			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), fieldErrors));
 	}
 
 	@Override
