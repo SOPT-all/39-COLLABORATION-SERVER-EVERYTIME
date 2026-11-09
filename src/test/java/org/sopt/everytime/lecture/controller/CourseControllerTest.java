@@ -30,8 +30,8 @@ class CourseControllerTest {
 				.param("hideRestricted", "true"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.message").value("강의 목록 조회 성공"))
-			.andExpect(jsonPath("$.data.content", hasSize(1)))
-			.andExpect(jsonPath("$.data.content[0].name").value("글쓰기와 소통"))
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("글쓰기와 소통"))
 			.andExpect(jsonPath("$.data.page").value(1));
 	}
 
@@ -39,12 +39,12 @@ class CourseControllerTest {
 	void getCourses_appliesFiltersAndPagination() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
-				.param("category", "전공필수")
+				.param("categoryId", "1")
 				.param("page", "1")
 				.param("size", "1"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.content", hasSize(1)))
-			.andExpect(jsonPath("$.data.content[0].name").value("운영체제"))
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
 			.andExpect(jsonPath("$.data.totalElements").value(2))
 			.andExpect(jsonPath("$.data.totalPages").value(2))
 			.andExpect(jsonPath("$.data.hasNext").value(true));
@@ -57,8 +57,8 @@ class CourseControllerTest {
 				.param("departmentId", "2")
 				.param("semester", "2학기"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.content", hasSize(1)))
-			.andExpect(jsonPath("$.data.content[0].name").value("글쓰기와 소통"));
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("글쓰기와 소통"));
 	}
 
 	@Test
@@ -67,7 +67,7 @@ class CourseControllerTest {
 				.header("X-Member-Id", 1)
 				.param("sort", "NAME_DESC"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.content[0].name").value("자료구조"));
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("자료구조"));
 	}
 
 	@Test
