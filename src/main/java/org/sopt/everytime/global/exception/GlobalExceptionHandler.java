@@ -6,6 +6,8 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+	private final MessageSource messageSource;
 
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<BaseResponse<Void>> handleBusinessException(BusinessException exception) {
@@ -41,7 +47,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		Map<String, String> fieldErrors = new LinkedHashMap<>();
 		exception.getBindingResult()
 			.getFieldErrors()
-			.forEach(fieldError -> fieldErrors.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage()));
+			.forEach(fieldError -> fieldErrors.putIfAbsent(fieldError.getField(),
+				messageSource.getMessage(fieldError, LocaleContextHolder.getLocale())));
 
 		logException(statusCode, exception);
 		ErrorCode errorCode = GlobalErrorCode.INVALID_INPUT_VALUE;

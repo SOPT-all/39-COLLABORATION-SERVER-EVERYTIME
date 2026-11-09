@@ -79,7 +79,7 @@ class GlobalExceptionHandlerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
+			.andExpect(jsonPath("$.message").value("요청 값이 올바르지 않습니다."))
 			.andExpect(jsonPath("$.data.name").value("이름은 비어있을 수 없습니다."))
 			.andExpect(jsonPath("$.data.nickname").value("닉네임은 10자 이하여야 합니다."));
 	}
