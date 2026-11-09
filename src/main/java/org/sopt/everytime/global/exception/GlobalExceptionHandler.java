@@ -6,18 +6,13 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,63 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		Map<String, String> fieldErrors = new LinkedHashMap<>();
 		exception.getBindingResult()
 			.getFieldErrors()
-			.forEach(fieldError -> fieldErrors.putIfAbsent(fieldError.getField(),
-				resolveValidationMessage(fieldError)));
+			.forEach(fieldError -> fieldErrors.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage()));
 
 		logException(statusCode, exception);
 		ErrorCode errorCode = GlobalErrorCode.INVALID_INPUT_VALUE;
 		return ResponseEntity.status(errorCode.getHttpStatus())
 			.headers(headers)
-			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), fieldErrors));
-	}
-
-	private String resolveValidationMessage(FieldError fieldError) {
-		if (fieldError.isBindingFailure()) {
-			return GlobalErrorCode.INVALID_INPUT_VALUE.getMessage();
-		}
-		return fieldError.getDefaultMessage();
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException exception,
-		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-		if (exception.isForReturnValue()) {
-			return handleExceptionInternal(exception, null, headers, statusCode, request);
-		}
-		Map<String, String> fieldErrors = new LinkedHashMap<>();
-		exception.getParameterValidationResults().forEach(result -> {
-			String name = result.getMethodParameter().getParameterName();
-			result.getResolvableErrors().forEach(error -> fieldErrors.putIfAbsent(name,
-				error.getDefaultMessage()));
-		});
-		return invalidRequest(exception, headers, fieldErrors);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException exception, HttpHeaders headers,
-		HttpStatusCode statusCode, WebRequest request) {
-		if (exception instanceof MethodArgumentTypeMismatchException argumentException) {
-			String name = argumentException.getName();
-			String message = "%s의 형식이 올바르지 않습니다.".formatted(name);
-			return invalidRequest(exception, headers, Map.of(name, message));
-		}
-		return handleExceptionInternal(exception, null, headers, statusCode, request);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleMissingServletRequestParameter(
-		MissingServletRequestParameterException exception, HttpHeaders headers, HttpStatusCode statusCode,
-		WebRequest request) {
-		String name = exception.getParameterName();
-		String message = "%s는 필수 요청 값입니다.".formatted(name);
-		return invalidRequest(exception, headers, Map.of(name, message));
-	}
-
-	private ResponseEntity<Object> invalidRequest(Exception exception, HttpHeaders headers,
-		Map<String, String> fieldErrors) {
-		ErrorCode errorCode = GlobalErrorCode.INVALID_INPUT_VALUE;
-		logException(errorCode.getHttpStatus(), exception);
-		return ResponseEntity.status(errorCode.getHttpStatus()).headers(headers)
 			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), fieldErrors));
 	}
 

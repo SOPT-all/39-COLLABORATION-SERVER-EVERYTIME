@@ -91,34 +91,35 @@ class TimetableDeleteControllerTest {
 	}
 
 	@Test
-	@DisplayName("사용자 ID가 없으면 필드별 오류를 반환한다")
+	@DisplayName("사용자 ID가 없으면 기존 공통 오류로 응답한다")
 	void deleteTimetableEntry_missingUserId() throws Exception {
 		mockMvc.perform(delete("/timetable/entries/1001"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.data.userId").value("userId는 필수 요청 값입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
 	@ParameterizedTest
 	@CsvSource({
-		"0, 1001, entryId, 시간표 항목 ID는 1 이상이어야 합니다.",
-		"-1, 1001, entryId, 시간표 항목 ID는 1 이상이어야 합니다.",
-		"abc, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
-		"1.5, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
-		"9223372036854775808, 1001, entryId, entryId의 형식이 올바르지 않습니다.",
-		"1001, 0, userId, 사용자 ID는 1 이상이어야 합니다.",
-		"1001, -1, userId, 사용자 ID는 1 이상이어야 합니다.",
-		"1001, abc, userId, userId의 형식이 올바르지 않습니다.",
-		"1001, 1.5, userId, userId의 형식이 올바르지 않습니다.",
-		"1001, 9223372036854775808, userId, userId의 형식이 올바르지 않습니다."
+		"0, 1001",
+		"-1, 1001",
+		"abc, 1001",
+		"1.5, 1001",
+		"9223372036854775808, 1001",
+		"1001, 0",
+		"1001, -1",
+		"1001, abc",
+		"1001, 1.5",
+		"1001, 9223372036854775808"
 	})
-	@DisplayName("잘못된 ID는 내부 정보 없이 400과 필드별 메시지를 반환한다")
-	void deleteTimetableEntry_invalidId(String entryId, String userId, String field, String message) throws Exception {
+	@DisplayName("잘못된 ID는 내부 정보 없이 기존 공통 400 응답을 반환한다")
+	void deleteTimetableEntry_invalidId(String entryId, String userId) throws Exception {
 		mockMvc.perform(delete("/timetable/entries/{entryId}", entryId).param("userId", userId))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data." + field).value(message));
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
 		assertThat(timetableEntryRepository.count()).isEqualTo(3L);
 	}
 }

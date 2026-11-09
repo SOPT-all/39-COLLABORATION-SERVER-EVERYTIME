@@ -129,7 +129,7 @@ class ReviewControllerTest {
 		mockMvc.perform(get(url))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
-			.andExpect(jsonPath("$.data").isNotEmpty());
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 }

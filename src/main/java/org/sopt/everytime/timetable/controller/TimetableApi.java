@@ -21,7 +21,7 @@ public interface TimetableApi {
 	@Operation(summary = "시간표 항목 삭제", description = "사용자가 담은 항목만 삭제하며 강의와 수업 시간 원본은 유지합니다.")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "시간표 항목 삭제 성공. data는 null입니다."),
-		@ApiResponse(responseCode = "400", description = "입력값이 올바르지 않습니다. data에 필드별 오류를 반환합니다."),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. data는 null입니다."),
 		@ApiResponse(responseCode = "403", description = "해당 시간표 항목을 삭제할 권한이 없습니다."),
 		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다. / 존재하지 않는 시간표 항목입니다."),
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.")
