@@ -2,6 +2,7 @@ package org.sopt.everytime.user.code;
 
 import org.sopt.everytime.global.code.ErrorCode;
 import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

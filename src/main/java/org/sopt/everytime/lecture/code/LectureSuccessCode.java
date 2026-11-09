@@ -2,6 +2,7 @@ package org.sopt.everytime.lecture.code;
 
 import org.sopt.everytime.global.code.SuccessCode;
 import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

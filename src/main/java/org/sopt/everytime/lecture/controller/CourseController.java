@@ -8,6 +8,7 @@ import org.sopt.everytime.lecture.dto.response.CourseResponse;
 import org.sopt.everytime.lecture.service.CourseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
