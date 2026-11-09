@@ -1,5 +1,6 @@
 package org.sopt.everytime.lecture.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.sopt.everytime.lecture.entity.LectureSection;
@@ -10,4 +11,6 @@ public interface LectureSectionRepository extends JpaRepository<LectureSection, 
 
 	@Query("select s from LectureSection s join fetch s.course where s.id = :id")
 	Optional<LectureSection> findWithCourseById(Long id);
+
+	List<LectureSection> findAllByCourseIdIn(List<Long> courseIds);
 }
