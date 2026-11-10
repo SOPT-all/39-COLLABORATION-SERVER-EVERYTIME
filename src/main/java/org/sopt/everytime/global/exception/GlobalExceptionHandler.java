@@ -10,9 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
+	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException exception,
+		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+		if (exception instanceof org.springframework.web.bind.MissingRequestHeaderException missingHeader
+			&& "X-Member-Id".equals(missingHeader.getHeaderName())) {
+			return handleClientError(GlobalErrorCode.USER_ID_REQUIRED, headers, request, exception);
+		}
+		return handleExceptionInternal(exception, null, headers, statusCode, request);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleTypeMismatch(org.springframework.beans.TypeMismatchException exception,
+		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+		if (exception instanceof MethodArgumentTypeMismatchException mismatch
+			&& ("userId".equals(mismatch.getName()) || "X-Member-Id".equals(mismatch.getName()))) {
+			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
+		}
+		return handleExceptionInternal(exception, null, headers, statusCode, request);
+	}
+
+	private ResponseEntity<Object> handleClientError(ErrorCode errorCode, HttpHeaders headers, WebRequest request,
+		Exception exception) {
+		logException(errorCode.getHttpStatus(), exception);
+		return ResponseEntity.status(errorCode.getHttpStatus())
+			.headers(headers)
+			.body(BaseResponse.failBody(errorCode.getHttpStatus(), errorCode.getMessage(), null));
+	}
+
+	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 		Map<String, String> fieldErrors = new LinkedHashMap<>();
@@ -53,6 +83,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers,
 		HttpStatusCode statusCode, WebRequest request) {
+		if (exception instanceof MethodArgumentTypeMismatchException mismatch
+			&& ("userId".equals(mismatch.getName()) || "X-Member-Id".equals(mismatch.getName()))) {
+			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
+		}
 		logException(statusCode, exception);
 		ErrorCode errorCode = GlobalErrorCode.from(statusCode);
 		return ResponseEntity.status(statusCode)

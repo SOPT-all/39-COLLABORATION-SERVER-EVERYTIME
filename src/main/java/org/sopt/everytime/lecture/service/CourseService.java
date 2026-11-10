@@ -36,7 +36,7 @@ public class CourseService {
 	public CoursePageResponse getCourses(Long userId, Long categoryId, Long departmentId, String semester,
 		boolean hideTaken, boolean hideRestricted, CourseSort sort, int page, int size) {
 		if (userId == null || userId <= 0) {
-			throw new BusinessException(GlobalErrorCode.INVALID_REQUEST);
+			throw new BusinessException(GlobalErrorCode.USER_ID_MUST_BE_POSITIVE);
 		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);

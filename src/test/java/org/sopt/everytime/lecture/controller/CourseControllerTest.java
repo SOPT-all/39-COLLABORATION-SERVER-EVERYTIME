@@ -93,22 +93,25 @@ class CourseControllerTest {
 	@Test
 	void getCourses_returnsBadRequestForInvalidMemberHeader() throws Exception {
 		mockMvc.perform(get("/api/v1/courses"))
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("사용자 ID는 필수입니다."))
+			.andExpect(jsonPath("$.data").value(nullValue()));
 
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", "invalid"))
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("사용자 ID는 숫자여야 합니다."));
 
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 0))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.message").value("사용자 ID는 1 이상이어야 합니다."))
 			.andExpect(jsonPath("$.data").value(nullValue()));
 
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", -1))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
+			.andExpect(jsonPath("$.message").value("사용자 ID는 1 이상이어야 합니다."));
 	}
 
 	@Test
