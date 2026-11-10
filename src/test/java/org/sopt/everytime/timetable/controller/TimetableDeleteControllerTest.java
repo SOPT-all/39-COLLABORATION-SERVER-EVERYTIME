@@ -130,7 +130,7 @@ class TimetableDeleteControllerTest {
 			.andExpect(jsonPath("$.code").value("400"))
 			.andExpect(jsonPath("$.message").value("1001".equals(entryId)
 				? ("0".equals(userId) || "-1".equals(userId)
-					? "사용자 ID는 1부터 시작하는 숫자 값입니다." : "사용자 ID는 1부터 시작하는 숫자 값입니다.")
+					? "사용자 ID는 1 이상의 숫자 값입니다." : "사용자 ID는 1 이상의 숫자 값입니다.")
 				: "잘못된 요청입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 		assertThat(timetableEntryRepository.count()).isEqualTo(3L);

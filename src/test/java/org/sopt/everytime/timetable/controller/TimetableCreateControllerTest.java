@@ -133,6 +133,13 @@ class TimetableCreateControllerTest {
 				.contentType("application/json")
 				.content("{\"sectionId\":0}"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.data.sectionId").value("분반 ID는 1 이상이어야 합니다."));
+			.andExpect(jsonPath("$.data.sectionId").value("분반 ID는 1 이상의 숫자 값입니다."));
+
+		mockMvc.perform(post("/api/v1/timetable/entries")
+				.header("X-Member-Id", "1001")
+				.contentType("application/json")
+				.content("{\"sectionId\":\"abc\"}"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("분반 ID는 1 이상의 숫자 값입니다."));
 	}
 }
