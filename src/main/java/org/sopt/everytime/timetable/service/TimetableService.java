@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.lecture.entity.SectionTime;
 import org.sopt.everytime.lecture.repository.SectionTimeRepository;
+import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.sopt.everytime.timetable.dto.response.TimetableEntryResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableTimeResponse;
@@ -48,5 +49,18 @@ public class TimetableService {
 			.map(entry -> TimetableEntryResponse.of(entry,
 				timesBySection.getOrDefault(entry.getSection().getId(), List.of())))
 			.toList());
+	}
+
+	@Transactional
+	public void deleteTimetableEntry(Long entryId, Long userId) {
+		if (!userRepository.existsById(userId)) {
+			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
+		}
+		TimetableEntry entry = timetableEntryRepository.findById(entryId)
+			.orElseThrow(() -> new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_NOT_FOUND));
+		if (!entry.getUser().getId().equals(userId)) {
+			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_FORBIDDEN);
+		}
+		timetableEntryRepository.delete(entry);
 	}
 }

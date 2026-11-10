@@ -20,4 +20,10 @@ public class TimetableController implements TimetableApi {
 		return BaseResponse.success(TimetableSuccessCode.TIMETABLE_FETCHED,
 			timetableService.getTimetable(userId));
 	}
+
+	@Override
+	public ResponseEntity<BaseResponse<Void>> deleteTimetableEntry(Long entryId, Long userId) {
+		timetableService.deleteTimetableEntry(entryId, userId);
+		return BaseResponse.success(TimetableSuccessCode.TIMETABLE_DELETED);
+	}
 }
