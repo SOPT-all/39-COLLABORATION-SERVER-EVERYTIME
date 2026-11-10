@@ -72,6 +72,21 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_returnsBadRequestForInvalidCategoryId() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("categoryId", "0"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("카테고리 ID는 1부터 5사이의 숫자 값 입니다"));
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("categoryId", "6"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("카테고리 ID는 1부터 5사이의 숫자 값 입니다"));
+	}
+
+	@Test
 	void getCourses_returnsBadRequestForInvalidPagination() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)

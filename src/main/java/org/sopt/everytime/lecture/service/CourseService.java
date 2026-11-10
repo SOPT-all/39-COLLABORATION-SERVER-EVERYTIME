@@ -38,6 +38,9 @@ public class CourseService {
 		if (userId <= 0) {
 			throw new BusinessException(GlobalErrorCode.USER_ID_MUST_BE_POSITIVE);
 		}
+		if (categoryId != null && (categoryId < 1 || categoryId > 5)) {
+			throw new BusinessException(GlobalErrorCode.CATEGORY_ID_INVALID);
+		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
 		}
