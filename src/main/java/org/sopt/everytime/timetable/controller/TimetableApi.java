@@ -35,7 +35,7 @@ public interface TimetableApi {
 	@GetMapping
 	ResponseEntity<BaseResponse<TimetableResponse>> getTimetable(
 		@Parameter(description = "시간표를 조회할 사용자 ID", example = "1", required = true)
-		@RequestHeader("X-Member-Id") @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다.") Long userId);
+		@RequestHeader("X-Member-Id") Long userId);
 
 	@Operation(summary = "시간표 항목 삭제", description = "담기 항목만 삭제하며 강의 원본은 유지합니다.")
 	@ApiResponses({
@@ -50,5 +50,5 @@ public interface TimetableApi {
 		@Parameter(description = "삭제할 시간표 담기 항목 ID", example = "1")
 		@PathVariable("entryId") @Min(value = 1, message = "시간표 항목 ID는 1 이상이어야 합니다.") Long entryId,
 		@Parameter(description = "삭제를 요청하는 사용자 ID", example = "1", required = true)
-		@RequestHeader("X-Member-Id") @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다.") Long userId);
+		@RequestHeader("X-Member-Id") Long userId);
 }

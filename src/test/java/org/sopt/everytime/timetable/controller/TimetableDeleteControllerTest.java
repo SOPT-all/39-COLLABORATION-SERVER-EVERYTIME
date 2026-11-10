@@ -95,7 +95,7 @@ class TimetableDeleteControllerTest {
 	void deleteTimetableEntry_missingUserId() throws Exception {
 		mockMvc.perform(delete("/timetable/entries/1001"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.message").value("사용자 ID는 필수입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
@@ -104,7 +104,7 @@ class TimetableDeleteControllerTest {
 	void deleteTimetableEntry_queryParameterWithoutHeader() throws Exception {
 		mockMvc.perform(delete("/timetable/entries/1001").param("userId", "1001"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.message").value("사용자 ID는 필수입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 		assertThat(timetableEntryRepository.existsById(1001L)).isTrue();
 	}
@@ -128,7 +128,10 @@ class TimetableDeleteControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+			.andExpect(jsonPath("$.message").value("1001".equals(entryId)
+				? ("0".equals(userId) || "-1".equals(userId)
+					? "사용자 ID는 1부터 시작하는 숫자 값입니다." : "사용자 ID는 1부터 시작하는 숫자 값입니다.")
+				: "잘못된 요청입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 		assertThat(timetableEntryRepository.count()).isEqualTo(3L);
 	}
