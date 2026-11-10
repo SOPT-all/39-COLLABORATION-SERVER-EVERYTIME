@@ -9,13 +9,27 @@ import org.springframework.data.repository.query.Param;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-	@Query("""
+	@Query(value = """
 		select c
 		from Course c
-		join c.department d
-		join c.category category
+		join fetch c.department d
+		join fetch c.category category
 		where (:categoryId is null or category.id = :categoryId)
 		and (:departmentId is null or d.id = :departmentId)
+		and (:semester is null or c.semester = :semester)
+		and (:hideTaken = false or not exists (
+			select history.id from CourseHistory history
+			where history.user.id = :userId and history.course.id = c.id
+		))
+		and (:hideRestricted = false or c.targetGrade is null or c.targetGrade = (
+			select u.grade from User u where u.id = :userId
+		))
+		""",
+		countQuery = """
+		select count(c)
+		from Course c
+		where (:categoryId is null or c.category.id = :categoryId)
+		and (:departmentId is null or c.department.id = :departmentId)
 		and (:semester is null or c.semester = :semester)
 		and (:hideTaken = false or not exists (
 			select history.id from CourseHistory history
