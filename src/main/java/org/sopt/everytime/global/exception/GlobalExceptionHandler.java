@@ -50,8 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(org.springframework.beans.TypeMismatchException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-		if (exception instanceof MethodArgumentTypeMismatchException mismatch
-			&& ("userId".equals(mismatch.getName()) || "X-Member-Id".equals(mismatch.getName()))) {
+		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
 		}
 		return handleExceptionInternal(exception, null, headers, statusCode, request);
@@ -83,8 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers,
 		HttpStatusCode statusCode, WebRequest request) {
-		if (exception instanceof MethodArgumentTypeMismatchException mismatch
-			&& ("userId".equals(mismatch.getName()) || "X-Member-Id".equals(mismatch.getName()))) {
+		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
 		}
 		logException(statusCode, exception);
@@ -100,5 +98,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			return;
 		}
 		log.warn("[{}] {}", statusCode.value(), exception.getMessage());
+	}
+
+	private boolean isUserIdTypeMismatch(Exception exception) {
+		if (!(exception instanceof MethodArgumentTypeMismatchException mismatch)) {
+			return false;
+		}
+		return "userId".equals(mismatch.getName())
+			|| "X-Member-Id".equals(mismatch.getName())
+			|| mismatch.getMessage().contains("X-Member-Id");
 	}
 }
