@@ -35,7 +35,7 @@ public interface CourseApi {
 	@GetMapping
 	ResponseEntity<BaseResponse<CoursePageResponse>> getCourses(
 		@Parameter(description = "사용자 ID", example = "1", required = true)
-		@RequestHeader("X-Member-Id") @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다.") Long userId,
+		@RequestHeader("X-Member-Id") Long userId,
 		@Parameter(description = "카테고리 ID", example = "1")
 		@RequestParam(value = "categoryId", required = false) Long categoryId,
 		@Parameter(description = "학과 ID", example = "1")
