@@ -14,7 +14,8 @@ public enum TimetableErrorCode implements ErrorCode {
 	TIMETABLE_ENTRY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시간표 항목입니다."),
 	TIMETABLE_ENTRY_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 시간표 항목을 삭제할 권한이 없습니다."),
 	TIMETABLE_ENTRY_DUPLICATED(HttpStatus.CONFLICT, "이미 시간표에 담긴 강의입니다."),
-	TIMETABLE_TIME_CONFLICT(HttpStatus.BAD_REQUEST, "강의 시간이 겹쳐서 담을 수 없습니다.");
+	TIMETABLE_TIME_CONFLICT(HttpStatus.BAD_REQUEST, "시간이 겹치는 강의가 있습니다."),
+	COURSE_NOT_AVAILABLE_FOR_GRADE(HttpStatus.BAD_REQUEST, "수강 대상 학년이 아닙니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

@@ -98,7 +98,23 @@ class TimetableCreateControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
-			.andExpect(jsonPath("$.message").value("강의 시간이 겹쳐서 담을 수 없습니다."))
+			.andExpect(jsonPath("$.message").value("시간이 겹치는 강의가 있습니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName("수강 대상 학년이 아닌 강의는 400을 반환한다")
+	void addTimetableEntry_gradeRestricted() throws Exception {
+		jdbcTemplate.update("UPDATE courses SET target_grade = 2 WHERE id = 1003");
+
+		mockMvc.perform(post("/api/v1/timetable/entries")
+				.header("X-Member-Id", "1001")
+				.contentType("application/json")
+				.content("{\"sectionId\":1003}"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.code").value("400"))
+			.andExpect(jsonPath("$.message").value("수강 대상 학년이 아닙니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 	}
 

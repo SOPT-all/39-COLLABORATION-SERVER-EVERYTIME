@@ -45,7 +45,7 @@ public interface TimetableApi {
 	@Operation(summary = "시간표 항목 추가", description = "선택한 강의 분반을 사용자의 시간표에 추가합니다.")
 	@ApiResponses({
 		@ApiResponse(responseCode = "201", description = "시간표 추가 성공. 생성된 entryId를 반환합니다."),
-		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 강의 시간이 겹치면 시간표에 담을 수 없습니다."),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 수강 대상 학년이 아니거나 시간이 겹치는 강의입니다."),
 		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 또는 강의 분반입니다."),
 		@ApiResponse(responseCode = "409", description = "이미 시간표에 담긴 강의입니다."),
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.")

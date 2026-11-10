@@ -69,6 +69,10 @@ public class TimetableService {
 			.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 		LectureSection section = lectureSectionRepository.findById(request.sectionId())
 			.orElseThrow(() -> new BusinessException(TimetableErrorCode.SECTION_NOT_FOUND));
+		Integer targetGrade = section.getCourse().getTargetGrade();
+		if (targetGrade != null && !targetGrade.equals(user.getGrade())) {
+			throw new BusinessException(TimetableErrorCode.COURSE_NOT_AVAILABLE_FOR_GRADE);
+		}
 		if (timetableEntryRepository.existsByUserIdAndSectionId(userId, request.sectionId())) {
 			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_DUPLICATED);
 		}
