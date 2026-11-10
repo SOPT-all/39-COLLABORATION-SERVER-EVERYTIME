@@ -84,6 +84,12 @@ class CourseControllerTest {
 				.param("categoryId", "6"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("카테고리 ID는 1부터 5사이의 숫자 값 입니다"));
+
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("categoryId", "a"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("카테고리 ID는 1부터 5사이의 숫자 값 입니다"));
 	}
 
 	@Test

@@ -50,6 +50,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(org.springframework.beans.TypeMismatchException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+		if (isCategoryIdTypeMismatch(exception)) {
+			return handleClientError(GlobalErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
+		}
 		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
 		}
@@ -82,6 +85,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers,
 		HttpStatusCode statusCode, WebRequest request) {
+		if (isCategoryIdTypeMismatch(exception)) {
+			return handleClientError(GlobalErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
+		}
 		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
 		}
@@ -107,5 +113,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return "userId".equals(mismatch.getName())
 			|| "X-Member-Id".equals(mismatch.getName())
 			|| mismatch.getMessage().contains("X-Member-Id");
+	}
+
+	private boolean isCategoryIdTypeMismatch(Exception exception) {
+		if (!(exception instanceof MethodArgumentTypeMismatchException mismatch)) {
+			return false;
+		}
+		return "categoryId".equals(mismatch.getName())
+			|| mismatch.getMessage().contains("categoryId");
 	}
 }
