@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.global.code.GlobalErrorCode;
+import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.lecture.entity.SectionTime;
 import org.sopt.everytime.lecture.entity.LectureSection;
 import org.sopt.everytime.lecture.repository.LectureSectionRepository;
 import org.sopt.everytime.lecture.repository.SectionTimeRepository;
 import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.sopt.everytime.timetable.dto.request.TimetableEntryCreateRequest;
-import org.sopt.everytime.timetable.dto.response.TimetableEntryResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableEntryCreateResponse;
+import org.sopt.everytime.timetable.dto.response.TimetableEntryResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableTimeResponse;
 import org.sopt.everytime.timetable.entity.TimetableEntry;

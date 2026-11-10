@@ -2,8 +2,8 @@ package org.sopt.everytime.timetable.controller;
 
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.timetable.dto.request.TimetableEntryCreateRequest;
-import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableEntryCreateResponse;
+import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
