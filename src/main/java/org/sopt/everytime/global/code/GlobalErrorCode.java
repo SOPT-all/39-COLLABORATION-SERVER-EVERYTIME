@@ -14,7 +14,6 @@ public enum GlobalErrorCode implements ErrorCode {
 	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "사용자 ID는 필수입니다."),
 	USER_ID_INVALID(HttpStatus.BAD_REQUEST, "사용자 ID는 1부터 시작하는 숫자 값입니다."),
-	CATEGORY_ID_INVALID(HttpStatus.BAD_REQUEST, "카테고리 ID는 1부터 5사이의 숫자 값 입니다"),
 	RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
 	METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메서드입니다."),
 	UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원하지 않는 미디어 타입입니다."),

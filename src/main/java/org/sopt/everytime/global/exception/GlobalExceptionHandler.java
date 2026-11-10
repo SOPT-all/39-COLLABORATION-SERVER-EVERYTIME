@@ -6,6 +6,7 @@ import java.util.Map;
 import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
+import org.sopt.everytime.lecture.code.LectureErrorCode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleTypeMismatch(org.springframework.beans.TypeMismatchException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 		if (isCategoryIdTypeMismatch(exception)) {
-			return handleClientError(GlobalErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
+			return handleClientError(LectureErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
 		}
 		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);
@@ -86,7 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers,
 		HttpStatusCode statusCode, WebRequest request) {
 		if (isCategoryIdTypeMismatch(exception)) {
-			return handleClientError(GlobalErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
+			return handleClientError(LectureErrorCode.CATEGORY_ID_INVALID, headers, request, exception);
 		}
 		if (isUserIdTypeMismatch(exception)) {
 			return handleClientError(GlobalErrorCode.USER_ID_INVALID, headers, request, exception);

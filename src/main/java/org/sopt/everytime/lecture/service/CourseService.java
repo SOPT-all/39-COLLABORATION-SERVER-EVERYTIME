@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.global.code.GlobalErrorCode;
+import org.sopt.everytime.global.exception.BusinessException;
+import org.sopt.everytime.lecture.code.LectureErrorCode;
 import org.sopt.everytime.lecture.dto.response.CoursePageResponse;
 import org.sopt.everytime.lecture.dto.request.CourseSort;
 import org.sopt.everytime.lecture.dto.response.CourseResponse;
+import org.sopt.everytime.lecture.entity.Course;
 import org.sopt.everytime.lecture.entity.LectureSection;
 import org.sopt.everytime.lecture.entity.SectionTime;
 import org.sopt.everytime.lecture.repository.CourseRepository;
@@ -39,13 +41,13 @@ public class CourseService {
 			throw new BusinessException(GlobalErrorCode.USER_ID_INVALID);
 		}
 		if (categoryId != null && (categoryId < 1 || categoryId > 5)) {
-			throw new BusinessException(GlobalErrorCode.CATEGORY_ID_INVALID);
+			throw new BusinessException(LectureErrorCode.CATEGORY_ID_INVALID);
 		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
 		}
 		Pageable pageable = PageRequest.of(page - 1, size, sort.getSort());
-		Page<org.sopt.everytime.lecture.entity.Course> courses = courseRepository.findCourses(userId, categoryId, departmentId, semester, hideTaken,
+		Page<Course> courses = courseRepository.findCourses(userId, categoryId, departmentId, semester, hideTaken,
 			hideRestricted, pageable);
 		List<Long> courseIds = courses.map(course -> course.getId()).toList();
 		List<LectureSection> sections = lectureSectionRepository.findAllByCourseIdIn(courseIds);
