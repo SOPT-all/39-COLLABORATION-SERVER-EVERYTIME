@@ -36,7 +36,7 @@ public class CourseService {
 	public CoursePageResponse getCourses(Long userId, Long categoryId, Long departmentId, String semester,
 		boolean hideTaken, boolean hideRestricted, CourseSort sort, int page, int size) {
 		if (userId <= 0) {
-			throw new BusinessException(GlobalErrorCode.USER_ID_MUST_BE_POSITIVE);
+			throw new BusinessException(GlobalErrorCode.USER_ID_INVALID);
 		}
 		if (categoryId != null && (categoryId < 1 || categoryId > 5)) {
 			throw new BusinessException(GlobalErrorCode.CATEGORY_ID_INVALID);

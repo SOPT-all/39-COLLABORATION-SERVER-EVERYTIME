@@ -121,18 +121,18 @@ class CourseControllerTest {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", "invalid"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("사용자 ID는 숫자여야 합니다."));
+			.andExpect(jsonPath("$.message").value("사용자 ID는 1부터 시작하는 숫자 값입니다."));
 
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 0))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("사용자 ID는 1 이상이어야 합니다."))
+			.andExpect(jsonPath("$.message").value("사용자 ID는 1부터 시작하는 숫자 값입니다."))
 			.andExpect(jsonPath("$.data").value(nullValue()));
 
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", -1))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("사용자 ID는 1 이상이어야 합니다."));
+			.andExpect(jsonPath("$.message").value("사용자 ID는 1부터 시작하는 숫자 값입니다."));
 	}
 
 	@Test

@@ -33,7 +33,7 @@ public class TimetableService {
 
 	public TimetableResponse getTimetable(Long userId) {
 		if (userId <= 0) {
-			throw new BusinessException(GlobalErrorCode.USER_ID_MUST_BE_POSITIVE);
+			throw new BusinessException(GlobalErrorCode.USER_ID_INVALID);
 		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
@@ -58,7 +58,7 @@ public class TimetableService {
 	@Transactional
 	public void deleteTimetableEntry(Long entryId, Long userId) {
 		if (userId <= 0) {
-			throw new BusinessException(GlobalErrorCode.USER_ID_MUST_BE_POSITIVE);
+			throw new BusinessException(GlobalErrorCode.USER_ID_INVALID);
 		}
 		if (!userRepository.existsById(userId)) {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
