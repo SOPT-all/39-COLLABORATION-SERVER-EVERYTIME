@@ -3,6 +3,7 @@ package org.sopt.everytime.timetable.controller;
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.timetable.dto.request.TimetableEntryCreateRequest;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
+import org.sopt.everytime.timetable.dto.response.TimetableEntryCreateResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,14 +44,14 @@ public interface TimetableApi {
 
 	@Operation(summary = "시간표 항목 추가", description = "선택한 강의 분반을 사용자의 시간표에 추가합니다.")
 	@ApiResponses({
-		@ApiResponse(responseCode = "201", description = "시간표 항목 추가 성공. data는 null입니다."),
+		@ApiResponse(responseCode = "201", description = "시간표 추가 성공. 생성된 entryId를 반환합니다."),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. data는 null입니다."),
 		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 또는 강의 분반입니다."),
 		@ApiResponse(responseCode = "409", description = "이미 시간표에 담긴 강의입니다."),
 		@ApiResponse(responseCode = "500", description = "서버 내부 오류입니다.")
 	})
 	@PostMapping("/entries")
-	ResponseEntity<BaseResponse<Void>> addTimetableEntry(
+	ResponseEntity<BaseResponse<TimetableEntryCreateResponse>> addTimetableEntry(
 		@Parameter(description = "시간표를 추가할 사용자 ID", example = "1", required = true)
 		@RequestHeader("X-Member-Id") Long userId,
 		@Valid @RequestBody TimetableEntryCreateRequest request);

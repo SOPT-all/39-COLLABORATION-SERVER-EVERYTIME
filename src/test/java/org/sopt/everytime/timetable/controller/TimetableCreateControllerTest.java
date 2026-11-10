@@ -39,8 +39,8 @@ class TimetableCreateControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.code").value("201"))
-			.andExpect(jsonPath("$.message").value("시간표 항목 추가 성공"))
-			.andExpect(jsonPath("$.data").isEmpty());
+			.andExpect(jsonPath("$.message").value("시간표 추가 성공"))
+			.andExpect(jsonPath("$.data.entryId").isNumber());
 
 		assertThat(jdbcTemplate.queryForObject(
 			"SELECT COUNT(*) FROM timetable_entries WHERE user_id = 1001 AND section_id = 1003", Long.class))

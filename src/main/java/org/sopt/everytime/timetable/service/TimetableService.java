@@ -14,6 +14,7 @@ import org.sopt.everytime.lecture.repository.SectionTimeRepository;
 import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.sopt.everytime.timetable.dto.request.TimetableEntryCreateRequest;
 import org.sopt.everytime.timetable.dto.response.TimetableEntryResponse;
+import org.sopt.everytime.timetable.dto.response.TimetableEntryCreateResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableTimeResponse;
 import org.sopt.everytime.timetable.entity.TimetableEntry;
@@ -62,7 +63,7 @@ public class TimetableService {
 	}
 
 	@Transactional
-	public void addTimetableEntry(Long userId, TimetableEntryCreateRequest request) {
+	public TimetableEntryCreateResponse addTimetableEntry(Long userId, TimetableEntryCreateRequest request) {
 		validateUserId(userId);
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
@@ -72,7 +73,8 @@ public class TimetableService {
 			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_DUPLICATED);
 		}
 		try {
-			timetableEntryRepository.saveAndFlush(TimetableEntry.of(user, section));
+			TimetableEntry entry = timetableEntryRepository.saveAndFlush(TimetableEntry.of(user, section));
+			return new TimetableEntryCreateResponse(entry.getId());
 		} catch (DataIntegrityViolationException exception) {
 			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_DUPLICATED);
 		}
