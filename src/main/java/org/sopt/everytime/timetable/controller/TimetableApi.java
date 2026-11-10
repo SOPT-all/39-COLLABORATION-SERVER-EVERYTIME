@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 @Tag(name = "Timetable", description = "시간표 API")
-@RequestMapping("/timetable")
+@RequestMapping("/api/v1/timetable")
 public interface TimetableApi {
 
 	@Operation(summary = "시간표 조회", description = "단일 연도·학기 데모의 담긴 강의 전체를 페이징 없이 조회합니다.")

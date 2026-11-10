@@ -32,7 +32,7 @@ class TimetableCreateControllerTest {
 	@Test
 	@DisplayName("존재하는 분반을 시간표에 추가한다")
 	void addTimetableEntry_success() throws Exception {
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "1001")
 				.contentType("application/json")
 				.content("{\"sectionId\":1003}"))
@@ -50,7 +50,7 @@ class TimetableCreateControllerTest {
 	@Test
 	@DisplayName("이미 담긴 분반을 다시 추가하면 409를 반환한다")
 	void addTimetableEntry_duplicated() throws Exception {
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "1001")
 				.contentType("application/json")
 				.content("{\"sectionId\":1001}"))
@@ -64,7 +64,7 @@ class TimetableCreateControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 분반은 404를 반환한다")
 	void addTimetableEntry_sectionNotFound() throws Exception {
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "1001")
 				.contentType("application/json")
 				.content("{\"sectionId\":999999}"))
@@ -75,7 +75,7 @@ class TimetableCreateControllerTest {
 	@Test
 	@DisplayName("존재하지 않는 사용자는 404를 반환한다")
 	void addTimetableEntry_userNotFound() throws Exception {
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "999999")
 				.contentType("application/json")
 				.content("{\"sectionId\":1003}"))
@@ -86,14 +86,14 @@ class TimetableCreateControllerTest {
 	@Test
 	@DisplayName("분반 ID가 없거나 1 미만이면 400을 반환한다")
 	void addTimetableEntry_invalidSectionId() throws Exception {
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "1001")
 				.contentType("application/json")
 				.content("{}"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.data.sectionId").value("분반 ID는 필수입니다."));
 
-		mockMvc.perform(post("/timetable/entries")
+		mockMvc.perform(post("/api/v1/timetable/entries")
 				.header("X-Member-Id", "1001")
 				.contentType("application/json")
 				.content("{\"sectionId\":0}"))
