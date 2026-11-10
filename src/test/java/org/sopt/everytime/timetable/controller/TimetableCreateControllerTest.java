@@ -84,6 +84,25 @@ class TimetableCreateControllerTest {
 	}
 
 	@Test
+	@DisplayName("기존 시간표와 시간이 겹치는 분반은 400을 반환한다")
+	void addTimetableEntry_timeConflict() throws Exception {
+		jdbcTemplate.update("""
+			INSERT INTO section_times (id, section_id, day_of_week, start_time, end_time)
+			VALUES (1005, 1003, 'MON', '13:00:00', '14:00:00')
+			""");
+
+		mockMvc.perform(post("/api/v1/timetable/entries")
+				.header("X-Member-Id", "1001")
+				.contentType("application/json")
+				.content("{\"sectionId\":1003}"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.code").value("400"))
+			.andExpect(jsonPath("$.message").value("강의 시간이 겹쳐서 담을 수 없습니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
 	@DisplayName("분반 ID가 없거나 1 미만이면 400을 반환한다")
 	void addTimetableEntry_invalidSectionId() throws Exception {
 		mockMvc.perform(post("/api/v1/timetable/entries")

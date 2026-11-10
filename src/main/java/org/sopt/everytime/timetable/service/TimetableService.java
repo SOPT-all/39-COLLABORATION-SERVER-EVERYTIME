@@ -72,12 +72,31 @@ public class TimetableService {
 		if (timetableEntryRepository.existsByUserIdAndSectionId(userId, request.sectionId())) {
 			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_DUPLICATED);
 		}
+		if (hasTimeConflict(userId, section.getId())) {
+			throw new BusinessException(TimetableErrorCode.TIMETABLE_TIME_CONFLICT);
+		}
 		try {
 			TimetableEntry entry = timetableEntryRepository.saveAndFlush(TimetableEntry.of(user, section));
 			return new TimetableEntryCreateResponse(entry.getId());
 		} catch (DataIntegrityViolationException exception) {
 			throw new BusinessException(TimetableErrorCode.TIMETABLE_ENTRY_DUPLICATED);
 		}
+	}
+
+	private boolean hasTimeConflict(Long userId, Long sectionId) {
+		List<TimetableEntry> entries = timetableEntryRepository.findAllWithCourseByUserId(userId);
+		if (entries.isEmpty()) {
+			return false;
+		}
+		List<Long> sectionIds = entries.stream()
+			.map(entry -> entry.getSection().getId())
+			.toList();
+		List<SectionTime> existingTimes = sectionTimeRepository.findAllBySectionIdIn(sectionIds);
+		List<SectionTime> requestedTimes = sectionTimeRepository.findAllBySectionIdIn(List.of(sectionId));
+		return requestedTimes.stream().anyMatch(requested -> existingTimes.stream().anyMatch(existing ->
+			requested.getDayOfWeek() == existing.getDayOfWeek()
+				&& requested.getStartTime().isBefore(existing.getEndTime())
+				&& existing.getStartTime().isBefore(requested.getEndTime())));
 	}
 
 	@Transactional
