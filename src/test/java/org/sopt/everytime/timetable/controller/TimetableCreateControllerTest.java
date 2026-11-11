@@ -140,6 +140,6 @@ class TimetableCreateControllerTest {
 				.contentType("application/json")
 				.content("{\"sectionId\":\"abc\"}"))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("분반 ID는 1 이상의 숫자 값입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
 	}
 }

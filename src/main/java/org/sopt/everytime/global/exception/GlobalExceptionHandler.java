@@ -7,7 +7,6 @@ import org.sopt.everytime.global.code.ErrorCode;
 import org.sopt.everytime.global.code.GlobalErrorCode;
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.lecture.code.LectureErrorCode;
-import org.sopt.everytime.timetable.code.TimetableErrorCode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +64,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
 		HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-		if (request.getDescription(false).contains("/api/v1/timetable/entries")) {
-			return handleClientError(TimetableErrorCode.SECTION_ID_INVALID, headers, request, exception);
-		}
 		return handleExceptionInternal(exception, null, headers, statusCode, request);
 	}
 
