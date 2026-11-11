@@ -37,4 +37,11 @@ public class TimetableEntry {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "section_id", nullable = false)
 	private LectureSection section;
+
+	public static TimetableEntry of(User user, LectureSection section) {
+		TimetableEntry entry = new TimetableEntry();
+		entry.user = user;
+		entry.section = section;
+		return entry;
+	}
 }

@@ -16,4 +16,6 @@ public interface TimetableEntryRepository extends JpaRepository<TimetableEntry, 
 		order by e.id
 		""")
 	List<TimetableEntry> findAllWithCourseByUserId(Long userId);
+
+	boolean existsByUserIdAndSectionId(Long userId, Long sectionId);
 }

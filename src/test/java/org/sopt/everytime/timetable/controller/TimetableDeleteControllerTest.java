@@ -37,7 +37,7 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("본인의 담기 항목만 삭제하고 강의와 수업 시간 및 다른 항목은 유지한다")
 	void deleteTimetableEntry_success() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/1001").header("X-Member-Id", "1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").header("X-Member-Id", "1001"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.code").value("200"))
@@ -59,7 +59,7 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("다른 사용자의 담기 항목은 403을 반환하고 삭제하지 않는다")
 	void deleteTimetableEntry_forbidden() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/1001").header("X-Member-Id", "1002"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").header("X-Member-Id", "1002"))
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.message").value("해당 시간표 항목을 삭제할 권한이 없습니다."))
@@ -70,7 +70,7 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("없는 사용자는 404를 반환하고 항목은 유지한다")
 	void deleteTimetableEntry_userNotFound() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/1001").header("X-Member-Id", "999999"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").header("X-Member-Id", "999999"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 사용자입니다."));
 		assertThat(timetableEntryRepository.existsById(1001L)).isTrue();
@@ -79,13 +79,13 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("없는 항목과 이미 삭제한 항목은 404를 반환한다")
 	void deleteTimetableEntry_notFound() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/999999").header("X-Member-Id", "1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/999999").header("X-Member-Id", "1001"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 시간표 항목입니다."));
-		mockMvc.perform(delete("/timetable/entries/1001").header("X-Member-Id", "1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").header("X-Member-Id", "1001"))
 			.andExpect(status().isOk());
 		timetableEntryRepository.flush();
-		mockMvc.perform(delete("/timetable/entries/1001").header("X-Member-Id", "1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").header("X-Member-Id", "1001"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("존재하지 않는 시간표 항목입니다."));
 	}
@@ -93,7 +93,7 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("사용자 ID 헤더가 없으면 기존 공통 오류로 응답한다")
 	void deleteTimetableEntry_missingUserId() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("사용자 ID는 필수입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
@@ -102,7 +102,7 @@ class TimetableDeleteControllerTest {
 	@Test
 	@DisplayName("쿼리 파라미터만으로는 사용자 ID 헤더를 대신할 수 없다")
 	void deleteTimetableEntry_queryParameterWithoutHeader() throws Exception {
-		mockMvc.perform(delete("/timetable/entries/1001").param("userId", "1001"))
+		mockMvc.perform(delete("/api/v1/timetable/entries/1001").param("userId", "1001"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("사용자 ID는 필수입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
@@ -124,13 +124,13 @@ class TimetableDeleteControllerTest {
 	})
 	@DisplayName("잘못된 ID는 내부 정보 없이 기존 공통 400 응답을 반환한다")
 	void deleteTimetableEntry_invalidId(String entryId, String userId) throws Exception {
-		mockMvc.perform(delete("/timetable/entries/{entryId}", entryId).header("X-Member-Id", userId))
+		mockMvc.perform(delete("/api/v1/timetable/entries/{entryId}", entryId).header("X-Member-Id", userId))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.code").value("400"))
 			.andExpect(jsonPath("$.message").value("1001".equals(entryId)
 				? ("0".equals(userId) || "-1".equals(userId)
-					? "사용자 ID는 1부터 시작하는 숫자 값입니다." : "사용자 ID는 1부터 시작하는 숫자 값입니다.")
+					? "사용자 ID는 1 이상의 숫자 값입니다." : "사용자 ID는 1 이상의 숫자 값입니다.")
 				: "잘못된 요청입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 		assertThat(timetableEntryRepository.count()).isEqualTo(3L);
