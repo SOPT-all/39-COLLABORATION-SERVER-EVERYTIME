@@ -2,6 +2,8 @@ package org.sopt.everytime.timetable.controller;
 
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.timetable.code.TimetableSuccessCode;
+import org.sopt.everytime.timetable.dto.request.TimetableEntryCreateRequest;
+import org.sopt.everytime.timetable.dto.response.TimetableEntryCreateResponse;
 import org.sopt.everytime.timetable.dto.response.TimetableResponse;
 import org.sopt.everytime.timetable.service.TimetableService;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,13 @@ import lombok.RequiredArgsConstructor;
 public class TimetableController implements TimetableApi {
 
 	private final TimetableService timetableService;
+
+	@Override
+	public ResponseEntity<BaseResponse<TimetableEntryCreateResponse>> addTimetableEntry(Long userId,
+		TimetableEntryCreateRequest request) {
+		return BaseResponse.success(TimetableSuccessCode.TIMETABLE_ENTRY_CREATED,
+			timetableService.addTimetableEntry(userId, request));
+	}
 
 	@Override
 	public ResponseEntity<BaseResponse<TimetableResponse>> getTimetable(Long userId) {
