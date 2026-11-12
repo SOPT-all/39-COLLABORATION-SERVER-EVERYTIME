@@ -1,5 +1,6 @@
 package org.sopt.everytime.lecture.controller;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -72,15 +73,20 @@ class CourseControllerTest {
 	}
 
 	@Test
-	void getCourses_returnsAverageGradePointAcrossSections() throws Exception {
+	void getCourses_returnsAverageGradePointPerSection() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
 				.param("departmentId", "1"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
-			.andExpect(jsonPath("$.data.courses[0].averageGradePoint").value(0.0))
+			.andExpect(jsonPath("$.data.courses[0].sections[?(@.sectionId == 3)].averageGradePoint")
+				.value(contains(5.0)))
 			.andExpect(jsonPath("$.data.courses[1].courseName").value("자료구조"))
-			.andExpect(jsonPath("$.data.courses[1].averageGradePoint").value(3.83));
+			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 1)].averageGradePoint")
+				.value(contains(3.83)))
+			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 2)].averageGradePoint")
+				.value(contains(0.0)))
+			.andExpect(jsonPath("$.data.courses[1].averageGradePoint").doesNotExist());
 	}
 
 	@Test
