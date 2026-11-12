@@ -24,10 +24,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	Double findAverageGradePointBySectionId(Long sectionId);
 
 	@Query(value = """
-		select r.section.course.id as courseId, avg(r.gradePoint) as averageGradePoint
+		select r.section.id as sectionId, avg(r.gradePoint) as averageGradePoint
 		from Review r
-		where r.section.course.id in :courseIds
-		group by r.section.course.id
+		where r.section.id in :sectionIds
+		group by r.section.id
 		""")
-	List<CourseAverageGradePoint> findAverageGradePointsByCourseIdIn(@Param("courseIds") List<Long> courseIds);
+	List<SectionAverageGradePoint> findAverageGradePointsBySectionIdIn(@Param("sectionIds") List<Long> sectionIds);
 }

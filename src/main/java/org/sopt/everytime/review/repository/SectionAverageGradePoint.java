@@ -1,8 +1,8 @@
 package org.sopt.everytime.review.repository;
 
-public interface CourseAverageGradePoint {
+public interface SectionAverageGradePoint {
 
-	Long getCourseId();
+	Long getSectionId();
 
 	Double getAverageGradePoint();
 }
