@@ -72,6 +72,18 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_returnsAverageGradePointAcrossSections() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("departmentId", "1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
+			.andExpect(jsonPath("$.data.courses[0].averageGradePoint").value(0.0))
+			.andExpect(jsonPath("$.data.courses[1].courseName").value("자료구조"))
+			.andExpect(jsonPath("$.data.courses[1].averageGradePoint").value(3.83));
+	}
+
+	@Test
 	void getCourses_returnsBadRequestForInvalidCategoryId() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
