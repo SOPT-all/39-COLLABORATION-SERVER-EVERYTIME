@@ -1,10 +1,13 @@
 package org.sopt.everytime.review.repository;
 
+import java.util.List;
+
 import org.sopt.everytime.review.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -19,4 +22,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 	@Query("select avg(r.gradePoint) from Review r where r.section.id = :sectionId")
 	Double findAverageGradePointBySectionId(Long sectionId);
+
+	@Query(value = """
+		select r.section.id as sectionId, avg(r.gradePoint) as averageGradePoint
+		from Review r
+		where r.section.id in :sectionIds
+		group by r.section.id
+		""")
+	List<SectionAverageGradePoint> findAverageGradePointsBySectionIdIn(@Param("sectionIds") List<Long> sectionIds);
 }
