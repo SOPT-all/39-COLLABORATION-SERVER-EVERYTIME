@@ -10,6 +10,9 @@ INSERT INTO lecture_sections (id, course_id, section_no, professor)
 VALUES (1, 1, '01', '김민수'),
        (2, 1, '02', '이지은'),
        (3, 2, '01', '박서준');
+INSERT INTO section_times (id, section_id, day_of_week, start_time, end_time, classroom)
+VALUES (1, 1, 'TUE', '10:30:00', '11:45:00', '공학관 410'),
+       (2, 1, 'THU', '10:30:00', '11:45:00', '공학관 410');
 INSERT INTO reviews (id, section_id, year, like_count, semester, grade_point, content)
 VALUES (1, 1, 2026, 0, '2학기', 4.50, '설명이 친절해요'),
        (2, 1, 2026, 0, '2학기', 3.00, '과제가 많아요'),

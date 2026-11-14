@@ -90,6 +90,17 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_returnsTimeTextPerSection() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("departmentId", "1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 1)].timeText")
+				.value(contains("화/목 10:30~11:45 / 공학관 410")))
+			.andExpect(jsonPath("$.data.courses[1].sections[0].times", hasSize(2)));
+	}
+
+	@Test
 	void getCourses_returnsBadRequestForInvalidCategoryId() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
