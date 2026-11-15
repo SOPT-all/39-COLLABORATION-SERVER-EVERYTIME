@@ -8,9 +8,9 @@ INSERT INTO lecture_sections (id, course_id, section_no, professor) VALUES (2, 1
 INSERT INTO keywords (id, name) VALUES (1, '교수님'), (2, '과제'), (3, '시험'), (4, '팀 프로젝트');
 
 INSERT INTO reviews (id, section_id, year, like_count, semester, grade_point, content) VALUES
-    (101, 1, 2026, 0, '2학기', 3.00, '매주 과제 있기는 한데 수업시간에 실습했던거로 나오는 경우도 있어서 엄청 귀찮지는 않음'),
-    (102, 1, 2026, 0, '2학기', 5.00, '매주 과제있긴한데 거의 수업시간에 다하는거고 부담 없어요'),
-    (103, 1, 2026, 0, '2학기', 5.00, '교수님께서 좋으셔서 듣기 좋았어요!');
+    (101, 1, 2026, 0, '2학기', 3, '매주 과제 있기는 한데 수업시간에 실습했던거로 나오는 경우도 있어서 엄청 귀찮지는 않음'),
+    (102, 1, 2026, 0, '2학기', 5, '매주 과제있긴한데 거의 수업시간에 다하는거고 부담 없어요'),
+    (103, 1, 2026, 0, '2학기', 5, '교수님께서 좋으셔서 듣기 좋았어요!');
 
 INSERT INTO review_keywords (id, review_id, keyword_id, highlight_start, highlight_end) VALUES
     (1, 103, 1, 0, 3),
