@@ -1,7 +1,5 @@
 package org.sopt.everytime.review.dto.response;
 
-import java.math.BigDecimal;
-
 import org.sopt.everytime.review.entity.Review;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,8 +14,8 @@ public record ReviewResponse(
 	@Schema(description = "수강 학기", example = "2학기")
 	String semester,
 
-	@Schema(description = "평점 (0.00~5.00)", example = "5.00")
-	BigDecimal gradePoint,
+	@Schema(description = "평점 (0~5 정수)", example = "5")
+	int gradePoint,
 
 	@Schema(description = "강의평 본문", example = "교수님께서 좋으셔서 듣기 좋았어요!")
 	String content,
