@@ -80,12 +80,12 @@ class CourseControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
 			.andExpect(jsonPath("$.data.courses[0].sections[?(@.sectionId == 3)].averageGradePoint")
-				.value(contains(5.0)))
+				.value(contains(5)))
 			.andExpect(jsonPath("$.data.courses[1].courseName").value("자료구조"))
 			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 1)].averageGradePoint")
-				.value(contains(3.83)))
+				.value(contains(4)))
 			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 2)].averageGradePoint")
-				.value(contains(0.0)))
+				.value(contains(0)))
 			.andExpect(jsonPath("$.data.courses[1].averageGradePoint").doesNotExist());
 	}
 
