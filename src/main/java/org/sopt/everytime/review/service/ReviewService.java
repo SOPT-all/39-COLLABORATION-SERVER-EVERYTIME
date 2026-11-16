@@ -72,6 +72,7 @@ public class ReviewService {
 		return new ReviewListResponse(
 			LectureInfoResponse.of(section, reviewRepository.findAverageGradePointBySectionId(section.getId())),
 			getKeywordCounts(section.getId()),
+			reviewRepository.countBySectionId(section.getId()),
 			PageResponse.from(reviews)
 		);
 	}

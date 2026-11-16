@@ -13,6 +13,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 	Page<Review> findBySectionId(Long sectionId, Pageable pageable);
 
+	long countBySectionId(Long sectionId);
+
 	@Query(value = """
 		select r from Review r
 		where r.section.id = :sectionId
