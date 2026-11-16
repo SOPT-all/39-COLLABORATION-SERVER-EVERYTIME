@@ -1,7 +1,5 @@
 package org.sopt.everytime.review.entity;
 
-import java.math.BigDecimal;
-
 import org.sopt.everytime.lecture.entity.LectureSection;
 
 import jakarta.persistence.Column;
@@ -40,8 +38,8 @@ public class Review {
 	@Column(nullable = false, length = 10)
 	private String semester;
 
-	@Column(nullable = false, precision = 3, scale = 2)
-	private BigDecimal gradePoint;
+	@Column(nullable = false)
+	private Integer gradePoint;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String content;

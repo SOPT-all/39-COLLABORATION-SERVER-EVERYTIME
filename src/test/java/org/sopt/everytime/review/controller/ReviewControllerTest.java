@@ -33,7 +33,7 @@ class ReviewControllerTest {
 			.andExpect(jsonPath("$.message").value("강의평 목록 조회 성공"))
 			.andExpect(jsonPath("$.data.lecture.sectionId").value(1))
 			.andExpect(jsonPath("$.data.lecture.courseName").value("AI와창의적문제해결"))
-			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(4.33))
+			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(4))
 			.andExpect(jsonPath("$.data.keywords", hasSize(4)))
 			.andExpect(jsonPath("$.data.keywords[0].name").value("교수님"))
 			.andExpect(jsonPath("$.data.keywords[0].count").value(1))
@@ -44,7 +44,7 @@ class ReviewControllerTest {
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(103))
 			.andExpect(jsonPath("$.data.reviews.content[0].year").value(2026))
 			.andExpect(jsonPath("$.data.reviews.content[0].semester").value("2학기"))
-			.andExpect(jsonPath("$.data.reviews.content[0].gradePoint").value(5.0))
+			.andExpect(jsonPath("$.data.reviews.content[0].gradePoint").value(5))
 			.andExpect(jsonPath("$.data.reviews.content[0].highlight").isEmpty())
 			.andExpect(jsonPath("$.data.reviews.content[2].reviewId").value(101))
 			.andExpect(jsonPath("$.data.reviews.page").value(1))
@@ -92,7 +92,7 @@ class ReviewControllerTest {
 	void getReviews_empty() throws Exception {
 		mockMvc.perform(get("/api/v1/sections/2/reviews"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(0.0))
+			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(0))
 			.andExpect(jsonPath("$.data.keywords[0].count").value(0))
 			.andExpect(jsonPath("$.data.reviews.content", hasSize(0)))
 			.andExpect(jsonPath("$.data.reviews.totalElements").value(0));

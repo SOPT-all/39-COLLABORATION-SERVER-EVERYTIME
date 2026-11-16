@@ -32,12 +32,12 @@ public record CourseResponse(Long courseId, String courseCode, String courseName
 
 	public record SectionResponse(Long sectionId, String sectionNo, String professor, Integer capacity,
 		Integer savedCount,
-		@Schema(description = "분반 강의평 평균 평점 (소수 셋째 자리에서 반올림, 강의평이 없으면 0)", example = "3.67")
-		double averageGradePoint,
+		@Schema(description = "분반 강의평 평균 평점 (소수 첫째 자리에서 반올림한 정수, 강의평이 없으면 0)", example = "4")
+		int averageGradePoint,
 		List<SectionTimeResponse> times, String timeText) {
 
 		public static SectionResponse from(LectureSection section, List<SectionTime> times, Double averageGradePoint) {
-			double rounded = averageGradePoint == null ? 0 : Math.round(averageGradePoint * 100) / 100.0;
+			int rounded = averageGradePoint == null ? 0 : (int)Math.round(averageGradePoint);
 			return new SectionResponse(section.getId(), section.getSectionNo(), section.getProfessor(),
 				section.getCapacity(), section.getSavedCount(), rounded,
 				times.stream().map(SectionTimeResponse::from).toList(), createTimeText(times));
