@@ -13,6 +13,9 @@ public record ReviewListResponse(
 	@Schema(description = "고정 키워드 칩 4개와 칩별 강의평 수 (분반 전체 기준)")
 	List<KeywordCountResponse> keywords,
 
+	@Schema(description = "「전체」 칩에 표시할 분반 전체 강의평 수 (칩 선택과 무관)", example = "3")
+	long totalReviewCount,
+
 	@Schema(description = "강의평 페이지 (등록순)")
 	PageResponse<ReviewResponse> reviews
 ) {

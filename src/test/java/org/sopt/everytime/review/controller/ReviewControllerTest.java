@@ -41,6 +41,7 @@ class ReviewControllerTest {
 			.andExpect(jsonPath("$.data.keywords[2].count").value(1))
 			.andExpect(jsonPath("$.data.keywords[3].name").value("팀 프로젝트"))
 			.andExpect(jsonPath("$.data.keywords[3].count").value(0))
+			.andExpect(jsonPath("$.data.totalReviewCount").value(3))
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(103))
 			.andExpect(jsonPath("$.data.reviews.content[0].year").value(2026))
 			.andExpect(jsonPath("$.data.reviews.content[0].semester").value("2학기"))
@@ -66,11 +67,12 @@ class ReviewControllerTest {
 	}
 
 	@Test
-	@DisplayName("칩별 조회는 키워드가 달린 강의평만 강조 구간과 함께 응답한다")
+	@DisplayName("칩별 조회는 키워드가 달린 강의평만 강조 구간과 함께 응답하고 전체 강의평 수는 유지한다")
 	void getReviews_byKeyword() throws Exception {
 		mockMvc.perform(get("/api/v1/sections/1/reviews/keywords/2"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.keywords[1].count").value(2))
+			.andExpect(jsonPath("$.data.totalReviewCount").value(3))
 			.andExpect(jsonPath("$.data.reviews.totalElements").value(2))
 			.andExpect(jsonPath("$.data.reviews.content[0].reviewId").value(102))
 			.andExpect(jsonPath("$.data.reviews.content[0].highlight.start").value(3))
@@ -94,6 +96,7 @@ class ReviewControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.lecture.averageGradePoint").value(0))
 			.andExpect(jsonPath("$.data.keywords[0].count").value(0))
+			.andExpect(jsonPath("$.data.totalReviewCount").value(0))
 			.andExpect(jsonPath("$.data.reviews.content", hasSize(0)))
 			.andExpect(jsonPath("$.data.reviews.totalElements").value(0));
 	}
