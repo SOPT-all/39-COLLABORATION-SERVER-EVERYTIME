@@ -25,7 +25,7 @@ public interface ReviewApi {
 
 	@Operation(
 		summary = "전체 강의평 조회",
-		description = "분반의 강의 정보, 고정 키워드 칩 4개와 칩별 강의평 수, 전체 강의평 목록을 조회합니다. highlight는 항상 null입니다."
+		description = "분반의 강의 정보, 고정 키워드 칩 4개와 칩별 강의평 수, 전체 강의평 수, 전체 강의평 목록을 조회합니다. highlight는 항상 null입니다."
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "강의평 목록 조회 성공"),
@@ -55,7 +55,7 @@ public interface ReviewApi {
 		summary = "칩별 강의평 조회",
 		description = """
 			선택한 키워드 칩이 달린 강의평만 조회하고, 본문 강조 구간(highlight)을 함께 응답합니다.
-			lecture와 keywords는 칩 선택과 무관하게 분반 전체 기준입니다.
+			lecture, keywords, totalReviewCount는 칩 선택과 무관하게 분반 전체 기준입니다.
 			"""
 	)
 	@ApiResponses({
