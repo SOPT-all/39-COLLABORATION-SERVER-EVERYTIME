@@ -101,6 +101,50 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_returnsSectionsWithinMergedTimeBlocks() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "MON-09:00-10:00", "MON-10:00-11:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
+			.andExpect(jsonPath("$.data.totalElements").value(1));
+	}
+
+	@Test
+	void getCourses_returnsOnlyMatchedSectionsWhenTimeFiltered() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "TUE-10:00-12:00", "THU-10:00-12:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("자료구조"))
+			.andExpect(jsonPath("$.data.courses[0].sections", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].sections[0].sectionId").value(1));
+	}
+
+	@Test
+	void getCourses_excludesSectionsWithTimesOutsideBlocks() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "TUE-10:00-12:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(0)))
+			.andExpect(jsonPath("$.data.totalElements").value(0));
+	}
+
+	@Test
+	void getCourses_returnsBadRequestForInvalidTimeFilter() throws Exception {
+		for (String time : new String[] {"MON-10:00", "XYZ-09:00-10:00", "MON-11:00-10:00", "MON-9시-10:00"}) {
+			mockMvc.perform(get("/api/v1/courses")
+					.header("X-Member-Id", 1)
+					.param("times", time))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("시간 필터 형식이 올바르지 않습니다."));
+		}
+	}
+
+	@Test
 	void getCourses_returnsBadRequestForInvalidCategoryId() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
