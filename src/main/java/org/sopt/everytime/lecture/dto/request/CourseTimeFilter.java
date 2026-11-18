@@ -66,6 +66,7 @@ public class CourseTimeFilter {
 	}
 
 	private record TimeBlock(Weekday dayOfWeek, LocalTime startTime, LocalTime endTime) {
+		private static final String END_OF_DAY = "24:00";
 
 		private static TimeBlock parse(String value) {
 			String[] parts = value.split("-");
@@ -75,7 +76,7 @@ public class CourseTimeFilter {
 			try {
 				Weekday dayOfWeek = Weekday.valueOf(parts[0]);
 				LocalTime startTime = LocalTime.parse(parts[1]);
-				LocalTime endTime = LocalTime.parse(parts[2]);
+				LocalTime endTime = parseEndTime(parts[2]);
 				if (!startTime.isBefore(endTime)) {
 					throw new BusinessException(LectureErrorCode.TIME_FILTER_INVALID);
 				}
@@ -83,6 +84,13 @@ public class CourseTimeFilter {
 			} catch (IllegalArgumentException | DateTimeParseException exception) {
 				throw new BusinessException(LectureErrorCode.TIME_FILTER_INVALID);
 			}
+		}
+
+		private static LocalTime parseEndTime(String value) {
+			if (END_OF_DAY.equals(value)) {
+				return LocalTime.MAX;
+			}
+			return LocalTime.parse(value);
 		}
 	}
 }
