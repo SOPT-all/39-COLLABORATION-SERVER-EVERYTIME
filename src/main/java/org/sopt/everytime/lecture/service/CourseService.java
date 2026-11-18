@@ -2,6 +2,7 @@ package org.sopt.everytime.lecture.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.sopt.everytime.global.code.GlobalErrorCode;
@@ -9,6 +10,7 @@ import org.sopt.everytime.global.exception.BusinessException;
 import org.sopt.everytime.lecture.code.LectureErrorCode;
 import org.sopt.everytime.lecture.dto.response.CoursePageResponse;
 import org.sopt.everytime.lecture.dto.request.CourseSort;
+import org.sopt.everytime.lecture.dto.request.CourseTimeFilter;
 import org.sopt.everytime.lecture.dto.response.CourseResponse;
 import org.sopt.everytime.lecture.entity.Course;
 import org.sopt.everytime.lecture.entity.LectureSection;
@@ -39,7 +41,7 @@ public class CourseService {
 	private final ReviewRepository reviewRepository;
 
 	public CoursePageResponse getCourses(Long userId, Long categoryId, Long departmentId, String semester,
-		boolean hideTaken, boolean hideRestricted, CourseSort sort, int page, int size) {
+		boolean hideTaken, boolean hideRestricted, CourseTimeFilter timeFilter, CourseSort sort, int page, int size) {
 		if (userId <= 0) {
 			throw new BusinessException(GlobalErrorCode.USER_ID_INVALID);
 		}
@@ -50,10 +52,17 @@ public class CourseService {
 			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
 		}
 		Pageable pageable = PageRequest.of(page - 1, size, sort.getSort());
+		Set<Long> matchedSectionIds = timeFilter.isEnabled() ? findMatchedSectionIds(timeFilter) : Set.of();
+		Set<Long> matchedCourseIds = timeFilter.isEnabled() ? findCourseIds(matchedSectionIds) : Set.of();
+		if (timeFilter.isEnabled() && matchedCourseIds.isEmpty()) {
+			return CoursePageResponse.from(Page.empty(pageable));
+		}
 		Page<Course> courses = courseRepository.findCourses(userId, categoryId, departmentId, semester, hideTaken,
-			hideRestricted, pageable);
+			hideRestricted, timeFilter.isEnabled(), matchedCourseIds, pageable);
 		List<Long> courseIds = courses.map(course -> course.getId()).toList();
-		List<LectureSection> sections = lectureSectionRepository.findAllByCourseIdIn(courseIds);
+		List<LectureSection> sections = lectureSectionRepository.findAllByCourseIdIn(courseIds).stream()
+			.filter(section -> !timeFilter.isEnabled() || matchedSectionIds.contains(section.getId()))
+			.toList();
 		Map<Long, List<LectureSection>> sectionsByCourse = sections.stream()
 			.collect(Collectors.groupingBy(section -> section.getCourse().getId()));
 		List<Long> sectionIds = sections.stream().map(LectureSection::getId).toList();
@@ -67,5 +76,21 @@ public class CourseService {
 				timesBySection, averageGradePoints);
 		});
 		return CoursePageResponse.from(responses);
+	}
+
+	private Set<Long> findMatchedSectionIds(CourseTimeFilter timeFilter) {
+		List<Long> candidateSectionIds = sectionTimeRepository.findSectionIdsByDayOfWeekIn(timeFilter.getDays());
+		return sectionTimeRepository.findAllBySectionIdIn(candidateSectionIds).stream()
+			.collect(Collectors.groupingBy(time -> time.getSection().getId()))
+			.entrySet().stream()
+			.filter(entry -> timeFilter.containsAll(entry.getValue()))
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toSet());
+	}
+
+	private Set<Long> findCourseIds(Set<Long> sectionIds) {
+		return lectureSectionRepository.findAllById(sectionIds).stream()
+			.map(section -> section.getCourse().getId())
+			.collect(Collectors.toSet());
 	}
 }

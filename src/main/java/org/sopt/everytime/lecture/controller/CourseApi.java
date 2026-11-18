@@ -1,5 +1,7 @@
 package org.sopt.everytime.lecture.controller;
 
+import java.util.List;
+
 import org.sopt.everytime.global.response.BaseResponse;
 import org.sopt.everytime.lecture.dto.request.CourseSort;
 import org.sopt.everytime.lecture.dto.response.CoursePageResponse;
@@ -27,7 +29,7 @@ public interface CourseApi {
 		description = "조건에 맞는 강의 목록을 페이지네이션하여 조회합니다.")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "강의 목록 조회 성공"),
-		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+		@ApiResponse(responseCode = "400", description = "잘못된 요청입니다. / 시간 필터 형식이 올바르지 않습니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class))),
 		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.",
 			content = @Content(schema = @Schema(implementation = BaseResponse.class)))
@@ -44,6 +46,9 @@ public interface CourseApi {
 		@RequestParam(value = "semester", required = false) String semester,
 		@RequestParam(value = "hideTaken", defaultValue = "false") boolean hideTaken,
 		@RequestParam(value = "hideRestricted", defaultValue = "false") boolean hideRestricted,
+		@Parameter(description = "시간 필터 (요일-HH:mm-HH:mm, 여러 개 가능). 수업 시간이 모두 선택한 블록 안에 들어가는 분반만 조회합니다.",
+			example = "MON-09:00-10:00")
+		@RequestParam(value = "times", required = false) List<String> times,
 		@RequestParam(value = "sort", defaultValue = "NAME_ASC") CourseSort sort,
 		@RequestParam(value = "page", defaultValue = "1") @Min(value = 1, message = "페이지는 1 이상이어야 합니다.") int page,
 		@RequestParam(value = "size", defaultValue = "10")

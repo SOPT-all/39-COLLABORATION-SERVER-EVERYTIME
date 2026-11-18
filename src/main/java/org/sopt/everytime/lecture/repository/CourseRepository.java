@@ -1,5 +1,7 @@
 package org.sopt.everytime.lecture.repository;
 
+import java.util.Collection;
+
 import org.sopt.everytime.lecture.entity.Course;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 		and (:hideRestricted = false or c.targetGrade is null or c.targetGrade = (
 			select u.grade from User u where u.id = :userId
 		))
+		and (:timeFiltered = false or c.id in :courseIds)
 		""",
 		countQuery = """
 		select count(c)
@@ -38,8 +41,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 		and (:hideRestricted = false or c.targetGrade is null or c.targetGrade = (
 			select u.grade from User u where u.id = :userId
 		))
+		and (:timeFiltered = false or c.id in :courseIds)
 		""")
 	Page<Course> findCourses(@Param("userId") Long userId, @Param("categoryId") Long categoryId,
 		@Param("departmentId") Long departmentId, @Param("semester") String semester,
-		@Param("hideTaken") boolean hideTaken, @Param("hideRestricted") boolean hideRestricted, Pageable pageable);
+		@Param("hideTaken") boolean hideTaken, @Param("hideRestricted") boolean hideRestricted,
+		@Param("timeFiltered") boolean timeFiltered, @Param("courseIds") Collection<Long> courseIds, Pageable pageable);
 }
