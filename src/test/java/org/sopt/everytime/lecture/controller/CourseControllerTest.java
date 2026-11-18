@@ -134,8 +134,20 @@ class CourseControllerTest {
 	}
 
 	@Test
+	void getCourses_allowsEndOfDayAsEndTime() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "FRI-22:00-23:00", "FRI-23:00-24:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("글쓰기와 소통"))
+			.andExpect(jsonPath("$.data.courses[0].sections[0].sectionId").value(4));
+	}
+
+	@Test
 	void getCourses_returnsBadRequestForInvalidTimeFilter() throws Exception {
-		for (String time : new String[] {"MON-10:00", "XYZ-09:00-10:00", "MON-11:00-10:00", "MON-9시-10:00"}) {
+		for (String time : new String[] {"MON-10:00", "XYZ-09:00-10:00", "MON-11:00-10:00", "MON-9시-10:00",
+			"MON-24:00-24:00", "MON-23:00-24:30"}) {
 			mockMvc.perform(get("/api/v1/courses")
 					.header("X-Member-Id", 1)
 					.param("times", time))
