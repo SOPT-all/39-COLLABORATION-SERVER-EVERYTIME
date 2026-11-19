@@ -101,6 +101,20 @@ class CourseControllerTest {
 	}
 
 	@Test
+	@Sql(scripts = "/sql/course-data.sql",
+		statements = "UPDATE section_times SET classroom = NULL WHERE section_id = 1")
+	void getCourses_returnsOnlineTimeTextWhenClassroomIsNull() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("departmentId", "1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 1)].timeText")
+				.value(contains("화/목 10:30~11:45 / 온라인")))
+			.andExpect(jsonPath("$.data.courses[1].sections[?(@.sectionId == 1)].times[0].classroom")
+				.value(contains(nullValue())));
+	}
+
+	@Test
 	void getCourses_returnsSectionsWithinMergedTimeBlocks() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)

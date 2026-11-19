@@ -52,9 +52,16 @@ public record CourseResponse(Long courseId, String courseCode, String courseName
 			return daysByTimeSlot.entrySet().stream()
 				.map(entry -> String.join("/", entry.getValue()) + " "
 					+ entry.getKey().startTime().format(TIME_FORMATTER) + "~"
-					+ entry.getKey().endTime().format(TIME_FORMATTER) + " / "
-					+ entry.getKey().classroom())
+					+ entry.getKey().endTime().format(TIME_FORMATTER)
+					+ toClassroomText(entry.getKey().classroom()))
 				.collect(Collectors.joining(", "));
+		}
+
+		private static String toClassroomText(String classroom) {
+			if (classroom == null || classroom.isBlank()) {
+				return " / " + ONLINE_CLASSROOM_TEXT;
+			}
+			return " / " + classroom;
 		}
 
 		private static String toKoreanDay(Weekday day) {
@@ -73,6 +80,8 @@ public record CourseResponse(Long courseId, String courseCode, String courseName
 		}
 
 		private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
+		private static final String ONLINE_CLASSROOM_TEXT = "온라인";
 	}
 
 	public record SectionTimeResponse(String dayOfWeek, LocalTime startTime, LocalTime endTime, String classroom) {
