@@ -59,7 +59,7 @@ public record CourseResponse(Long courseId, String courseCode, String courseName
 
 		private static String toClassroomText(String classroom) {
 			if (classroom == null || classroom.isBlank()) {
-				return " / " + ONLINE_CLASSROOM_TEXT;
+				return "";
 			}
 			return " / " + classroom;
 		}
@@ -79,10 +79,7 @@ public record CourseResponse(Long courseId, String courseCode, String courseName
 		private record TimeSlot(LocalTime startTime, LocalTime endTime, String classroom) {
 		}
 
-		private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-
-		private static final String ONLINE_CLASSROOM_TEXT = "온라인";
-	}
+		private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");	}
 
 	public record SectionTimeResponse(String dayOfWeek, LocalTime startTime, LocalTime endTime, String classroom) {
 
