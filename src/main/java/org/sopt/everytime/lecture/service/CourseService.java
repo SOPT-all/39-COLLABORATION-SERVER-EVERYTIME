@@ -83,7 +83,7 @@ public class CourseService {
 		return sectionTimeRepository.findAllBySectionIdIn(candidateSectionIds).stream()
 			.collect(Collectors.groupingBy(time -> time.getSection().getId()))
 			.entrySet().stream()
-			.filter(entry -> timeFilter.containsAll(entry.getValue()))
+			.filter(entry -> timeFilter.overlapsAny(entry.getValue()))
 			.map(Map.Entry::getKey)
 			.collect(Collectors.toSet());
 	}

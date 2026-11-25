@@ -115,14 +115,26 @@ class CourseControllerTest {
 	}
 
 	@Test
-	void getCourses_returnsSectionsWithinMergedTimeBlocks() throws Exception {
+	void getCourses_returnsSectionsCoveringSelectedBlock() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "MON-10:30-11:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("자료구조"))
+			.andExpect(jsonPath("$.data.courses[0].sections", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].sections[0].sectionId").value(2))
+			.andExpect(jsonPath("$.data.totalElements").value(1));
+	}
+
+	@Test
+	void getCourses_returnsSectionsPartiallyOverlappingBlocks() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
 				.param("times", "MON-09:00-10:00", "MON-10:00-11:00"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.courses", hasSize(1)))
-			.andExpect(jsonPath("$.data.courses[0].courseName").value("운영체제"))
-			.andExpect(jsonPath("$.data.totalElements").value(1));
+			.andExpect(jsonPath("$.data.courses", hasSize(2)))
+			.andExpect(jsonPath("$.data.totalElements").value(2));
 	}
 
 	@Test
@@ -138,10 +150,22 @@ class CourseControllerTest {
 	}
 
 	@Test
-	void getCourses_excludesSectionsWithTimesOutsideBlocks() throws Exception {
+	void getCourses_returnsSectionsWhenAnyTimeOverlaps() throws Exception {
 		mockMvc.perform(get("/api/v1/courses")
 				.header("X-Member-Id", 1)
-				.param("times", "TUE-10:00-12:00"))
+				.param("times", "TUE-10:00-11:00"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.courses", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].courseName").value("자료구조"))
+			.andExpect(jsonPath("$.data.courses[0].sections", hasSize(1)))
+			.andExpect(jsonPath("$.data.courses[0].sections[0].sectionId").value(1));
+	}
+
+	@Test
+	void getCourses_excludesSectionsOnlyTouchingBlocks() throws Exception {
+		mockMvc.perform(get("/api/v1/courses")
+				.header("X-Member-Id", 1)
+				.param("times", "MON-12:00-13:00", "FRI-22:00-23:00"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.courses", hasSize(0)))
 			.andExpect(jsonPath("$.data.totalElements").value(0));

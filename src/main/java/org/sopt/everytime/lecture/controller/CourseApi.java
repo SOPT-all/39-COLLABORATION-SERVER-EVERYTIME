@@ -47,7 +47,7 @@ public interface CourseApi {
 		@RequestParam(value = "hideTaken", defaultValue = "false") boolean hideTaken,
 		@RequestParam(value = "hideRestricted", defaultValue = "false") boolean hideRestricted,
 		@Parameter(description = "시간 필터 (요일-HH:mm-HH:mm, 여러 개 가능, 종료 시간은 24:00까지 가능). "
-			+ "수업 시간이 모두 선택한 블록 안에 들어가는 분반만 조회합니다.",
+			+ "선택한 블록과 겹치는 수업 시간이 하나라도 있는 분반을 조회합니다.",
 			example = "MON-09:00-10:00")
 		@RequestParam(value = "times", required = false) List<String> times,
 		@RequestParam(value = "sort", defaultValue = "NAME_ASC") CourseSort sort,
